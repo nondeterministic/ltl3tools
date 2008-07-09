@@ -1,0 +1,62 @@
+#!/bin/bash
+
+# ##############################################################################
+# Copyright (c) 2008 Andreas Bauer <baueran@gmail.com>
+# ##############################################################################
+
+# ##############################################################################
+# Settings, edit as you please.
+# These are basically paths to the executable files which make up the
+# functionality of ltl2mon.
+#
+# This is where your ltl2mon package is extracted to.
+# Alternatively, just change into the directory of the package.
+export PACKAGE="."
+
+export FSMCROSSPROD=$PACKAGE"/bin/fsmcrossprod"
+export NEVERTOSYM=$PACKAGE"/bin/nevertosymbols"
+export NEVERTOFSM=$PACKAGE"/bin/nevertofsm"
+
+export FSMTOOLS=$PACKAGE"/third-party"
+export LTLTOBA=$PACKAGE"/third-party/ltl2ba"
+#
+# ##############################################################################
+
+# ##############################################################################
+# Do NOT edit beyond this point, unless you know what you are doing
+# ##############################################################################
+#
+if [ ! "$1" ]; then
+    echo "Error: No arguments given."
+    echo "The correct syntax is: ltl2mon \"<formula>\""
+    exit 0
+fi
+
+# The sed-stuff, here and in the following, circumvents weird ltl2ba behaviour.
+export PHI=$1
+export NPHI=`echo ! \( $PHI \)`
+
+$LTLTOBA -f "$PHI" | \
+    sed '1d' |\
+    sed '1i never { ' > Phi.never
+$NEVERTOFSM < Phi.never > Phi.txt
+
+$NEVERTOSYM < Phi.never > actions.syms 
+
+$LTLTOBA -f "$NPHI" | \
+    sed '1d' |\
+    sed '1i never { ' > NPhi.never
+$NEVERTOFSM < NPhi.never > NPhi.txt
+
+$FSMTOOLS/fsmcompile -i actions.syms Phi.txt |\
+$FSMTOOLS/fsmdeterminize |\
+$FSMTOOLS/fsmdraw -i actions.syms > DPhi.dot
+
+$FSMTOOLS/fsmcompile -i actions.syms NPhi.txt |\
+$FSMTOOLS/fsmdeterminize |\
+$FSMTOOLS/fsmdraw -i actions.syms > DNPhi.dot
+
+$FSMCROSSPROD -f DPhi.dot -f DNPhi.dot
+rm Phi.txt NPhi.txt actions.syms DPhi.dot DNPhi.dot Phi.never NPhi.never
+#
+# ##############################################################################

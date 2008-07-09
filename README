@@ -1,0 +1,34 @@
+LTL3 tools / ltl2mon README
+---------------------------
+
+This is preliminary software.  Use at own risk.  The third-party
+directory is only included for testing purposes and the software
+within not necessarily licensed under the GPL.
+
+What you need to run this
+
+  1. AT&T's fsmlibrary: http://www.research.att.com/~fsmtools/fsm/
+
+  2. LTL2BA: http://www.lsv.ens-cachan.fr/~gastin/ltl2ba/
+
+  3. Optional: AT&T's Graphviz, which includes the programs dot, dotty, etc.
+     Note that most modern Linux systems have these preinstalled.
+
+How to run ltl2mon
+
+  1. Change into the directory where you extracted the package.
+
+  2. Check settings inside ltl2mon
+
+  3. Run, for example, "./ltl2mon "(! a) U b" | dot -Tps > graph.ps"
+
+How to compile ltl2mon
+
+  1. (as above)
+  
+  2. Run "make install"
+
+  Notice, ltl2mon is written in Ocaml.  So you need an Ocaml compiler, etc.
+
+For further information read the files AUTHORS and COPYRIGHT, or visit
+http://ltl3tools.sf.net/.
