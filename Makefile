@@ -1,5 +1,12 @@
+VERSION=0.0.1
+
 all:
 	cd src; make all
+
+dist:
+	cd ..; cp -r ltl3tools ltl3tools-$(VERSION);            \
+	tar cf ltl3tools-$(VERSION).tar ltl3tools-$(VERSION);   \
+	gzip ltl3tools-$(VERSION).tar; rm -rf ltl3tools-$(VERSION)
 
 install:
 	make all
