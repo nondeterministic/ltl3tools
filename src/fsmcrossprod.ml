@@ -31,6 +31,8 @@ let states = ref [ "" ]
 let transitions = ref [("", "", "")]
 let alphabet = ref [ "" ]
 let ifiles = ref [ ]
+let comb_states = ref [ ]
+let colouring = ref false
 
 (* read_file reads the contents of a file named filename, and returns
    them as a string list *)
@@ -92,19 +94,36 @@ let rec cproduct states1 states2 delta1 delta2 sigma =
                                         ((p1,p2), a, (q1, q2))
                                    ) sigma) s2) s1
 
-(* Some printing functions: *)
+(* This function is never called, it is for debugging only. *)
 
 let rec show_trans transitions =
   match transitions with
       [] -> Printf.printf("")
-    | (p, a, q)::t -> 
+    | (p, a, q)::t ->
 	Printf.printf ("%s -> %s [label = \"%s\"]\n") p q a;
 	show_trans t
 
-let rec show_states states =
+(* Add combined states to a global data structure, in case, we want to
+   print the states later separately *)
+
+let rec add_comb_states alldelta_product_automaton =
+  match alldelta_product_automaton with
+      [] -> comb_states := !comb_states
+    | ((p1,p2), a, (q1,q2))::t -> 
+	comb_states := !comb_states @ [(p1,p2); (q1,q2)];
+	add_comb_states t
+
+let rec show_comb_states states =
   match states with
       [] -> Printf.printf("")
-    | h::t -> Printf.printf ("%s\n") h; show_states t
+    | (q1,q2)::t -> 
+	if ((int_of_string q1) = -1) then
+	  Printf.printf ("\"(%s, %s)\" [style=filled, color=red]\n") q1 q2
+	else if ((int_of_string q2) = -1) then
+	  Printf.printf ("\"(%s, %s)\" [style=filled, color=green]\n") q1 q2
+	else
+	  Printf.printf ("\"(%s, %s)\" [style=filled, color=yellow]\n") q1 q2;
+	show_comb_states t
 
 let rec show_prod alldelta_product_automaton =
   match alldelta_product_automaton with
@@ -132,6 +151,8 @@ let show_help =
       Printf.printf
 	(" -f, --file FILE   Define FSM input file\n");
       Printf.printf
+	(" -c, --colour      Turn on colouring\n");
+      Printf.printf
         (" -h, --help        Display this help information\n");
       Printf.printf
         (" -v, --version     Display version information\n\n");
@@ -142,7 +163,8 @@ let show_help =
 
 let specs =
 [
-  ('f', "file", None, (append ifiles));
+  ('f', "file", None, (Getopt.append ifiles));
+  ('c', "colour", (Getopt.set colouring true), None);
   ('v', "version", (Config.show_version program_name), None);
   ('h', "help", show_help, None);
   ('?', "", show_help, None)
@@ -176,8 +198,14 @@ let _ =
 					   trans1 trans2 
 					   !alphabet)) in
 		print_endline ("digraph G {");
-		show_prod (prune_transitions prod ("0", "0"));
-		print_endline ("}")
+		let comb_delta = (prune_transitions prod ("0", "0")) in
+		  show_prod comb_delta;
+		  if (!colouring = true) then (
+		    add_comb_states comb_delta;
+		    show_comb_states (remove_doubles !comb_states)
+		  );
+		  print_endline ("}")
       | _ -> show_error ("Incorrect number of arguments.\n")
   with Getopt.Error (error) -> ignore (Config.anon_args program_name error)
+    
     

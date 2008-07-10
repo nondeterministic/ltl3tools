@@ -1,0 +1,9 @@
+Thu Jul 10 13:18:08 EST 2008  <baueran@gmail.com>
+
+- NEWS: added
+- ChangeLog: added
+- src/neverl.mll: switched off print_char statement that would print
+  unmatched characters and confuse the parser.
+- src/config.ml: updated version from 0.0.1 to 0.0.2
+- src/fsmcrossprod.ml: added -c option for colouring states
+
