@@ -46,5 +46,5 @@ rule token = parse
   | id as id    { ID (id) }
   | digit+ as num
                 { NUM (int_of_string num) }
-  | _ as c      { print_char c; token lexbuf }
+  | _ as c      { (* print_char c; *) token lexbuf }
   | eof		{ raise End_of_file }

@@ -12,11 +12,7 @@ OBJECTS = 	config.cmo \
 		gutils.cmo \
 		getopt.cmo
 
-all:
-	make nevertofsm
-	make nevertosymbols
-	make extractalphabet
-	make fsmcrossprod
+all: nevertofsm nevertosymbols extractalphabet fsmcrossprod
 
 neverp.cmo:
 	ocamlyacc neverp.mly
@@ -26,27 +22,31 @@ neverp.cmo:
 
 nevertofsm: neverp.cmo
 	ocamlc -c $(SOURCES) nevertofsm.ml
-	ocamlc -o nevertofsm          \
+	ocamlc -custom -ccopt -static \
+	       -o nevertofsm          \
 	       $(OBJECTS)             \
 	       neverl.cmo neverp.cmo  \
 	       nevertofsm.cmo
 
 extractalphabet: neverp.cmo
 	ocamlc -c $(SOURCES) extractalphabet.ml
-	ocamlc -o extractalphabet     \
+	ocamlc -custom -ccopt -static \
+	        -o extractalphabet    \
 	        $(OBJECTS)            \
 		neverl.cmo neverp.cmo \
 		extractalphabet.cmo
 
 nevertosymbols: neverp.cmo
 	ocamlc -c $(SOURCES) nevertosymbols.ml
-	ocamlc -o nevertosymbols      \
+	ocamlc -custom -ccopt -static \
+	       -o nevertosymbols      \
 	        $(OBJECTS)            \
 		neverl.cmo neverp.cmo \
 		nevertosymbols.cmo
 
 fsmcrossprod:
-	ocamlc -I +camlp4 -pp camlp4of.opt \
+	ocamlc -custom -ccopt -static \
+	       -I +camlp4 -pp camlp4of.opt \
 		$(SOURCES)            \
 		fsmcrossprod.ml       \
 		-o fsmcrossprod

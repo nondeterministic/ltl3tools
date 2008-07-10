@@ -1,0 +1,14 @@
+NEWS
+
+Thu Jul 10 13:47:39 EST 2008: LTL3 tools 0.0.2
+
+- Fixed parser error of never-claim parser
+
+- Added colour option to fsmcrossprod
+
+- Adjusted ltl2mon accordingly
+
+Wed Jul 9 21:11:23 EST 2008: LTL3 tools 0.0.1
+
+- Released initial version 0.0.1
+
