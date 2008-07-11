@@ -137,7 +137,7 @@ let show_help =
   Some (
     fun () ->
       Printf.printf 
-        ("%s returns the synchronous product for two FSMs given as two files\n")
+        ("%s returns the product for two deterministic finite-state machines\n")
 	program_name;
       Printf.printf 
         ("stored in AT&T's fsmlibrary format.");

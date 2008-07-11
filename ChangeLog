@@ -1,3 +1,9 @@
+Fri Jul 11 11:15:20 EST 2008  <baueran@gmail.com>
+
+- Makefile: updated version from 0.0.2 to 0.0.3
+- src/config.ml: updated version from 0.0.2 to 0.0.3
+- src/fsmcrossprod.ml: changed help text
+
 Thu Jul 10 13:18:08 EST 2008  <baueran@gmail.com>
 
 - NEWS: added
