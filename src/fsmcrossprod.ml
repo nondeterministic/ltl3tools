@@ -17,6 +17,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *)
 
+(*i*)
 open Config
 open Getopt
 open Printf
@@ -24,18 +25,43 @@ open String
 open Putils
 open Mutils
 open Gutils
+(*i*)
+
+(*s The program's name. *)
 
 let program_name = "fsmcrossprod"
 
-let states = ref [ "" ]
-let transitions = ref [("", "", "")]
-let alphabet = ref [ "" ]
+(*s A place where the program temporarily stores the states of the
+  FSM. *)
+
+let states = ref [ ]
+
+(*s A place where the program temporarily stores the transitions of
+  the FSM. *)
+
+let transitions = ref [ ]
+
+(*s A place where the program stores the alphabet of the FSM. *)
+
+let alphabet = ref [ ]
+
+(*s A list of strings which contains the file names of the input
+  files. *)
+
 let ifiles = ref [ ]
+
+(*s The combined states of both input FSM after the cross product was
+  taken. *)
+
 let comb_states = ref [ ]
+
+(*s True if the states of the cross product should be coloured,
+  otherwise false. *)
+
 let colouring = ref false
 
-(* read_file reads the contents of a file named filename, and returns
-   them as a string list *)
+(*s [read_file] reads the contents of a file named [filename], and
+  returns them as a string list *)
 
 let read_file filename =
   if Sys.file_exists filename
@@ -52,59 +78,62 @@ let read_file filename =
   else
     ["The file does not exist"]
 
-(* l is a string list and contains basically the contents of a
-   DOT-file. parse_dot goes through this line by line and sets the
-   global variables states and transitions. *)
+(*s The input [dotfile] is a string list and contains basically the
+  contents of a Graphviz DOT-file.  [parse_dot] goes through this,
+  line by line, and sets the global variables [states] and
+  [transitions], accordingly. *)
 
-let rec parse_dot l =
-  match l with
+let rec parse_dot dotfile =
+  match dotfile with
       [] -> (!transitions, !states)
     | h::t ->
-	let hh = rmchar h ' ' in 
+	let hh = rmchar h ' ' in
 	  if (safe_extfind hh "->" != (-1)) then (
 	    let src = (get_src_state hh) in
 	    let dst = (get_dst_state hh) in
 	    let label = (get_label hh) in
 	      transitions := !transitions @ [src, label, dst];
 	      parse_dot t)
-	  else if ((safe_extfind hh "{" != (-1)) || 
+	  else if ((safe_extfind hh "{" != (-1)) ||
 		     (safe_extfind hh "}" != (-1))) then
 	    parse_dot t
-	  else if (safe_extfind hh "=" = -1) || 
+	  else if (safe_extfind hh "=" = -1) ||
 	    ((safe_extfind hh "=" >= 0 && safe_extfind hh "[label" >= 0)) then
-	      if (safe_extfind hh "=" = -1) then ( 
+	      if (safe_extfind hh "=" = -1) then (
 		states := !states @ [hh];
 		parse_dot t)
-	      else ( let upto = safe_extfind hh "[label" in 
+	      else ( let upto = safe_extfind hh "[label" in
 		       states := !states @ [String.sub hh 0 upto];
 		       parse_dot t )
 	  else
 	    parse_dot t
 
-(* THIS IS FOR ***DFA*** ONLY! *)
+(*s [cproduct] takes as input two lists of states, and two lists of
+  transitions of two \textbf{deterministic} finite state machines
+  (FSM), as well as their alphabet, [sigma].  Each state list is a
+  list of strings representing the states' names, each [delta] is a
+  list of type [string * string * string] (as the FSMs are
+  deterministic), and [sigma] is basically a comma-separated list of
+  actions (i.e., one long string).
+
+  The function returns a list of type [(string * string) * string *
+  (string * string)], where the pairs of strings are the new states
+  and the entire entry corresponds to a single transition in the
+  product automaton. *)
 
 let rec cproduct states1 states2 delta1 delta2 sigma =
   let s1 = states1 @ ["-1"] in
   let s2 = states2 @ ["-1"] in
-  List.map (fun p1 ->
-              List.map (fun p2 ->
-                          List.map (fun a -> 
-                                      let q1 = get_dest p1 a delta1 in
-                                      let q2 = get_dest p2 a delta2 in
-                                        ((p1,p2), a, (q1, q2))
-                                   ) sigma) s2) s1
+    List.map (fun p1 ->
+		List.map (fun p2 ->
+                            List.map (fun a -> 
+					let q1 = get_dest p1 a delta1 in
+					let q2 = get_dest p2 a delta2 in
+                                          ((p1,p2), a, (q1, q2))
+                                     ) sigma) s2) s1
 
-(* This function is never called, it is for debugging only. *)
-
-let rec show_trans transitions =
-  match transitions with
-      [] -> Printf.printf("")
-    | (p, a, q)::t ->
-	Printf.printf ("%s -> %s [label = \"%s\"]\n") p q a;
-	show_trans t
-
-(* Add combined states to a global data structure, in case, we want to
-   print the states later separately *)
+(*s Adds the combined states of the product automaton, once built, to
+  a global data structure, [comb_states]. *)
 
 let rec add_comb_states alldelta_product_automaton =
   match alldelta_product_automaton with
@@ -112,6 +141,12 @@ let rec add_comb_states alldelta_product_automaton =
     | ((p1,p2), a, (q1,q2))::t -> 
 	comb_states := !comb_states @ [(p1,p2); (q1,q2)];
 	add_comb_states t
+
+(*s [show_comb_states] prints [states] on standard output using
+  traffic-light colours, where [states] is a list of type [string *
+  string].  Red are meant to be violating states, green are satisfying
+  states, and yellow neither.  This function is basically triggered by
+  the [colouring] flag, respectively the [--c] command line option. *)
 
 let rec show_comb_states states =
   match states with
@@ -125,6 +160,11 @@ let rec show_comb_states states =
 	  Printf.printf ("\"(%s, %s)\" [style=filled, color=yellow]\n") q1 q2;
 	show_comb_states t
 
+(*s [show_prod] takes as input [alldelta_product_automaton], a list of
+  type [(string * string) * string * (string * string)], representing
+  the transition table of a finite state machine.  It then prints this
+  on standard output using the Graphviz DOT-syntax. *)
+
 let rec show_prod alldelta_product_automaton =
   match alldelta_product_automaton with
       [] -> Printf.printf("")
@@ -132,6 +172,8 @@ let rec show_prod alldelta_product_automaton =
 	Printf.printf
 	  ("\"(%s, %s)\" -> \"(%s, %s)\" [label = \"%s\"]\n") p1 p2 q1 q2 a;
 	show_prod t
+
+(*s Displays help text and options of the program on standard output *)
 	     
 let show_help = 
   Some (
@@ -161,6 +203,9 @@ let show_help =
       exit 0
   )
 
+(*s fsmcrossprod's command line options stored in a list to be
+  processed by Alain Frisch's getopt. *)
+
 let specs =
 [
   ('f', "file", None, (Getopt.append ifiles));
@@ -170,9 +215,16 @@ let specs =
   ('?', "", show_help, None)
 ]
 
+(*s This function is called when an exception is thrown during the
+  parsing of command line parameters. *)
+
 let show_error msg =
   Printf.printf ("%s: %s\n") program_name msg;
   exit 0
+
+(*s The main entry for fsmcrossprod.  Handles processing of command
+line parameters via Alain Frisch's getopt, calls processing functions
+for reading the input files, etc. *)
 
 let _ = 
   try
