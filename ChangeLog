@@ -1,3 +1,7 @@
+Sat Jul 12 16:37:06 EST 2008  <baueran@gmail.com>
+
+- src/neverl.mll: add support for '_' in tokens
+
 Sat Jul 12 16:13:43 EST 2008  <baueran@gmail.com>
 
 - src/Makfile: added doc target

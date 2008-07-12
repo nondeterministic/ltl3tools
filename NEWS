@@ -1,10 +1,11 @@
-NEWS
+LTL3 Tools NEWS
+-=-=-=-=-=-=-=-
 
-[under development]: LTL3 tools 0.0.3
+[under development]:                    LTL3 tools 0.0.3
 
-- Better code documentation
+- Propositions may now contain '_'
 
-Thu Jul 10 13:47:39 EST 2008: LTL3 tools 0.0.2
+Thu Jul 10 13:47:39 EST 2008:           LTL3 tools 0.0.2
 
 - Fixed parser error of never-claim parser
 
@@ -12,7 +13,7 @@ Thu Jul 10 13:47:39 EST 2008: LTL3 tools 0.0.2
 
 - Adjusted ltl2mon accordingly
 
-Wed Jul 9 21:11:23 EST 2008: LTL3 tools 0.0.1
+Wed Jul 9 21:11:23 EST 2008:            LTL3 tools 0.0.1
 
 - Released initial version 0.0.1
 
