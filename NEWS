@@ -1,5 +1,9 @@
 NEWS
 
+[under development]: LTL3 tools 0.0.3
+
+- Better code documentation
+
 Thu Jul 10 13:47:39 EST 2008: LTL3 tools 0.0.2
 
 - Fixed parser error of never-claim parser

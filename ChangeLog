@@ -1,6 +1,6 @@
 Sat Jul 12 16:13:43 EST 2008  <baueran@gmail.com>
 
-- src/Makfile; added doc target
+- src/Makfile: added doc target
 - src/ocamlweb.sty: ocamlweb style file added
 - src/fsmcrossprod: updated inline documentation
 
