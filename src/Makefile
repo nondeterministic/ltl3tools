@@ -51,6 +51,11 @@ fsmcrossprod:
 		fsmcrossprod.ml       \
 		-o fsmcrossprod
 
+doc:
+	ocamlweb fsmcrossprod.ml > doc.tex
+	latex doc; latex doc
+	dvipdf doc.dvi
+
 clean:
 	rm -rf nevertofsm nevertosymbols fsmcrossprod extractalphabet
 	rm -rf dist neverl.ml neverp.ml
