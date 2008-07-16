@@ -47,21 +47,30 @@ let succ_states t s =
 			    false) rt in
     List.map (fun (_,_,dst) -> dst) my
 
-(*s Function returns $true$ if state [q] is reachable in a list of
-  transitions [t] with initial state [i], otherwise $false$. *)
 
-(* TODO: Cycles lead to nontermination.  Maintain list of already
-   visited states!  *)
-
-let rec has_path t i q =
+let rec has_path2 t i q visited =
   if i = q then
     true
   else
-    let successors = succ_states t i in
-      match successors with
+    (* First, get all possible successors. *)
+    let all_successors = succ_states t i in
+    (* Now, remove all successors, already visited. *)
+    let new_successors = 
+      List.filter (fun x -> (List.mem x visited) = false) all_successors in
+      match new_successors with
 	  [] -> false
 	| _  -> 
-	    List.exists (fun x -> has_path t x q) successors
+	    List.exists 
+	      (* Add the new successors to the list of previously
+		 visited states. *)
+	      (fun x -> has_path2 t x q (new_successors @ visited)) 
+	      new_successors
+
+(*s Function returns $true$ if state [q] is reachable in a list of
+  transitions [t] with initial state [i], otherwise $false$. *)
+
+let has_path t i q =
+  has_path2 t i q []
 	      
 (*s This function ``prunes away'' unreachable states and their
   respective transitions, where [t] is a list of transitions of an
