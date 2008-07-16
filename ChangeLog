@@ -1,3 +1,8 @@
+Wed Jul 16 19:37:39 EST 2008  <baueran@gmail.com>
+
+- src/gutils: documented bug for has_path in inline documentation, but did
+  not provide fix for it, yet.
+
 Wed Jul 16 16:37:26 EST 2008  <baueran@gmail.com>
 
 - src/neverl.mll: glob comments
