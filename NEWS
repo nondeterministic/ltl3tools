@@ -3,6 +3,9 @@ LTL3 Tools NEWS
 
 [under development]:                    LTL3 tools 0.0.3
 
+- Fixed a non-termination bug which would cause stack overflow on certain
+  formulae, such as "[] <> a"
+  
 - Formulae may now contain '->' and '<->'
 
 - Propositions may now contain '_'
