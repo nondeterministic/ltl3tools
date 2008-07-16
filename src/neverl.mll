@@ -1,5 +1,6 @@
 (* 
-   ltl2mon - converts an LTL formula into a FSM
+   This is part of the LTL3 tools (see http://ltl3tools.sf.net/)
+
    Copyright (c) 2008 Andreas Bauer <baueran@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -16,14 +17,13 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *)
 
-(* file: nerverl.mll *)
 {
   open Neverp (* Assumes the parser file is "neverp.mly". *)
 }
 
 let digit = ['0'-'9']
-let id =  ['a'-'z' 'A'-'Z' '0'-'9' '_' '!']+
-let label = ['('] ['!' '[' ']' '<' '>' '|' '&' '-' '>' ' ' ')' '(' '_' 'a'-'z' 'A'-'Z' '0'-'9']+ [')']
+let id    = ['a'-'z' 'A'-'Z' '0'-'9' '_' '!']+
+let label = ('(') ['!' '[' ']' '<' '>' '|' '&' '-' '>' ' ' ')' '(' '_' 'a'-'z' 'A'-'Z' '0'-'9']+ (')')
 
 rule token = parse
   | [' ' '\t' '\n']	(* eat up whitespace *)
@@ -35,8 +35,7 @@ rule token = parse
   | ':'         { COLON }
   | ';'         { SEMICOLON }
   | '\n'	{ NL }
-  | "/*"        { REMOPEN }
-  | "*/"        { REMCLOSE }
+  | "/*"        { glob_comments lexbuf } 
   | "never"     { NEVER }
   | "if"        { IF }
   | "fi"        { FI }
@@ -48,3 +47,6 @@ rule token = parse
                 { NUM (int_of_string num) }
   | _ as c      { (* print_char c; *) token lexbuf }
   | eof		{ raise End_of_file }
+and glob_comments = parse
+  | _           {glob_comments lexbuf}    (* just glob anything *)
+  | "*/"        { token lexbuf }          (* return *)

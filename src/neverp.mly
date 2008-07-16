@@ -1,5 +1,6 @@
 /* 
-   ltl2mon - converts an LTL formula into a FSM
+   This is part of the LTL3 tools (see http://ltl3tools.sf.net/)
+
    Copyright (c) 2008 Andreas Bauer <baueran@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -73,17 +74,7 @@ input:      /* empty */ { }
 		  | iff        { }
 		  | transition { }
 		  | skip       { }
-		  | comment    { }	
                   ;
-
-  some_text:
-                   /* empty */      { }
-		  | some_text ID    { }
-		  | some_text LABEL { }
-                  ;
-
-  comment:
-    REMOPEN some_text REMCLOSE { } ;
 
   skip:     SKIP 
             { 
@@ -103,7 +94,7 @@ input:      /* empty */ { }
 		Declarations.states := !Declarations.states @ 
 		  [(string_to_int $1)]
 	      with Invalid_string -> Printf.printf ("") 
-	    } ;
+	    };
   
 
   transition:
