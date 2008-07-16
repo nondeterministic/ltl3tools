@@ -18,6 +18,7 @@
 
 open List
 open Mutils
+open Printf
 
 (* get all unique states from a list of transitions, alldelta *)
    
@@ -25,35 +26,43 @@ let get_states alldelta =
   remove_doubles ((List.map (fun (a,b,c) -> a) alldelta) @
                     (List.map (fun (a,b,c) -> c) alldelta))
 
-(*s [succ_states] takes a list of transitions (of an alternating Buchi
-  automaton) and some state [s] $\in LTL$, and returns all immediate
-  successor states of [s], i.e., all states reachable via taking one
-  transition only. *)
-          
+(*s [succ_states] takes a list of transitions and some state [s], and
+  returns all immediate successor states of [s], i.e., all states
+  reachable via taking one transition only. *)
+    
 let succ_states t s =
+  (* First identify all transitions which have s as starting state as
+     there may be more than one. *)
   let rt = List.filter (fun (src,_,_) -> 
                           if s = src then 
 			    true 
                           else 
 			    false) t in
+    (* Then get for each of those transitions with s as starting state
+       the immediate successor (and throw away self-loops).  *)
   let my = List.filter (fun (_,_,dst) -> 
 			  if (dst <> s) then 
 			    true 
 			  else 
 			    false) rt in
     List.map (fun (_,_,dst) -> dst) my
-      
-(*s Function returns $true$ if state [q] $\in LTL$ is reachable in a
-   list of transitions [t] with initial state [i] $\in LTL$, otherwise
-   $false$. *)
+
+(*s Function returns $true$ if state [q] is reachable in a list of
+  transitions [t] with initial state [i], otherwise $false$. *)
+
+(* TODO: Cycles lead to nontermination.  Maintain list of already
+   visited states!  *)
 
 let rec has_path t i q =
-  if i = q then 
+  if i = q then
     true
-  else 
-    let r = succ_states t i in
-      List.mem true (List.map (fun x -> has_path t x q) r)
-	
+  else
+    let successors = succ_states t i in
+      match successors with
+	  [] -> false
+	| _  -> 
+	    List.exists (fun x -> has_path t x q) successors
+	      
 (*s This function ``prunes away'' unreachable states and their
   respective transitions, where [t] is a list of transitions of an
   alternating Buchi automaton, [i] $\in LTL$ is the initial state of
