@@ -3,6 +3,8 @@ LTL3 Tools NEWS
 
 [under development]:                    LTL3 tools 0.0.3
 
+- Formulae may now contain '->' and '<->'
+
 - Propositions may now contain '_'
 
 Thu Jul 10 13:47:39 EST 2008:           LTL3 tools 0.0.2
