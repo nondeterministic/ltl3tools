@@ -1,11 +1,15 @@
+Thu Jul 17 13:37:32 EST 2008  <baueran@gmail.com>
+
+- Makefile: changed dist target
+
 Wed Jul 16 19:51:56 EST 2008  <baueran@gmail.com>
 
-- src/gutils.ml: fixed bug mentioned in previous commit message.
+- src/gutils.ml: fixed bug mentioned in previous commit message
 
 Wed Jul 16 19:37:39 EST 2008  <baueran@gmail.com>
 
-- src/gutils.ml: documented bug for has_path in inline documentation, but did
-  not provide fix for it, yet.
+- src/gutils.ml: documented bug for has_path in inline documentation, but
+  did not provide fix for it, yet
 
 Wed Jul 16 16:37:26 EST 2008  <baueran@gmail.com>
 
