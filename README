@@ -1,11 +1,7 @@
-LTL3 tools / ltl2mon README
----------------------------
+LTL3 tools README
+-=-=-=-=-=-=-=-=-
 
-This is preliminary software.  Use at own risk.  The third-party
-directory is only included for testing purposes and the software
-within not necessarily licensed under the GPL.
-
-What you need to run this
+What you need to properly use the LTL3 tools:
 
   1. AT&T's fsmlibrary: http://www.research.att.com/~fsmtools/fsm/
 
@@ -14,15 +10,18 @@ What you need to run this
   3. Optional: AT&T's Graphviz, which includes the programs dot, dotty, etc.
      Note that most modern Linux systems have these preinstalled.
 
-How to run ltl2mon
+How to run ltl2mon:
 
   1. Change into the directory where you extracted the package.
 
-  2. Check settings inside ltl2mon
+  2. Check the settings inside ltl2mon
 
   3. Run, for example, "./ltl2mon "(! a) U b" | dot -Tps > graph.ps"
 
-How to compile ltl2mon
+How to compile ltl2mon:
+
+If you are on i686 Linux, you do not have to compile the LTL3 tools
+as there are some statically linked binaries in the bin/ directory.
 
   1. (as above)
   

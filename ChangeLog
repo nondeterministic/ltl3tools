@@ -1,5 +1,6 @@
 Thu Jul 17 13:37:32 EST 2008  <baueran@gmail.com>
 
+- README: updated installation instructions
 - Makefile: changed dist target
 
 Wed Jul 16 19:51:56 EST 2008  <baueran@gmail.com>
