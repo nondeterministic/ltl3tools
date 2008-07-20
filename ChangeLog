@@ -1,3 +1,8 @@
+Sun Jul 20 17:24:16 EST 2008  <baueran@gmail.com>
+
+- src/dot.ml: added
+- src/fsmcrossprod.ml: include dot.ml
+
 Thu Jul 17 13:37:32 EST 2008  <baueran@gmail.com>
 
 - README: updated installation instructions

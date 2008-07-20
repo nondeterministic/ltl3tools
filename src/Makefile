@@ -3,6 +3,7 @@ SOURCES = 	config.ml \
 		mutils.ml \
 		putils.ml \
 		gutils.ml \
+		dot.ml    \
 		getopt.ml
 
 OBJECTS = 	config.cmo \
@@ -10,6 +11,7 @@ OBJECTS = 	config.cmo \
 		mutils.cmo \
 		putils.cmo \
 		gutils.cmo \
+		dot.cmo    \
 		getopt.cmo
 
 all: nevertofsm nevertosymbols extractalphabet fsmcrossprod
