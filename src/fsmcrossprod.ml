@@ -25,25 +25,12 @@ open String
 open Putils
 open Mutils
 open Gutils
+open Dot
 (*i*)
 
 (*s The program's name. *)
 
 let program_name = "fsmcrossprod"
-
-(*s A place where the program temporarily stores the states of the
-  FSM. *)
-
-let states = ref [ ]
-
-(*s A place where the program temporarily stores the transitions of
-  the FSM. *)
-
-let transitions = ref [ ]
-
-(*s A place where the program stores the alphabet of the FSM. *)
-
-let alphabet = ref [ ]
 
 (*s A list of strings which contains the file names of the input
   files. *)
@@ -78,35 +65,6 @@ let read_file filename =
   else
     ["The file does not exist"]
 
-(*s The input [dotfile] is a string list and contains basically the
-  contents of a Graphviz DOT-file.  [parse_dot] goes through this,
-  line by line, and sets the global variables [states] and
-  [transitions], accordingly. *)
-
-let rec parse_dot dotfile =
-  match dotfile with
-      [] -> (!transitions, !states)
-    | h::t ->
-	let hh = rmchar h ' ' in
-	  if (safe_extfind hh "->" != (-1)) then (
-	    let src = (get_src_state hh) in
-	    let dst = (get_dst_state hh) in
-	    let label = (get_label hh) in
-	      transitions := !transitions @ [src, label, dst];
-	      parse_dot t)
-	  else if ((safe_extfind hh "{" != (-1)) ||
-		     (safe_extfind hh "}" != (-1))) then
-	    parse_dot t
-	  else if (safe_extfind hh "=" = -1) ||
-	    ((safe_extfind hh "=" >= 0 && safe_extfind hh "[label" >= 0)) then
-	      if (safe_extfind hh "=" = -1) then (
-		states := !states @ [hh];
-		parse_dot t)
-	      else ( let upto = safe_extfind hh "[label" in
-		       states := !states @ [String.sub hh 0 upto];
-		       parse_dot t )
-	  else
-	    parse_dot t
 
 (*s [cproduct] takes as input two lists of states, and two lists of
   transitions of two \textbf{deterministic} finite state machines
@@ -234,30 +192,25 @@ let _ =
     match !ifiles with
 	h::t::[] ->
 	  let fsm1 = (read_file h) in
-	  let (trans1, states1) = parse_dot fsm1 in
-	    transitions := [];
-	    states := [];
-	    alphabet := [];
-	    let fsm2 = (read_file t) in
-	      alphabet := 
-		actions_to_alphabet (
-		  powerset (
-		    sort (
-		      remove_doubles (
-			extract_labels trans1))));
-	      let (trans2, states2) = parse_dot fsm2 in
-	      let prod = unlist (unlist (cproduct states1 states2 
-					   trans1 trans2 
-					   !alphabet)) in
-		print_endline ("digraph G {");
-		let comb_delta = (prune_transitions prod ("0", "0")) in
-		  show_prod comb_delta;
-		  if (!colouring = true) then (
-		    add_comb_states comb_delta;
-		    show_comb_states (remove_doubles !comb_states)
-		  );
-		  print_endline ("}")
+	  let (trans1, states1) = Dot.parse fsm1 in
+	  let fsm2 = (read_file t) in
+	  let alphabet = 
+	    actions_to_alphabet (
+	      powerset (
+		sort (
+		  remove_doubles (
+		    extract_labels trans1)))) in
+	  let (trans2, states2) = Dot.parse fsm2 in
+	  let prod = unlist (unlist (cproduct states1 states2 
+				       trans1 trans2 
+				       alphabet)) in
+	    print_endline ("digraph G {");
+	    let comb_delta = (prune_transitions prod ("0", "0")) in
+	      show_prod comb_delta;
+	      if (!colouring = true) then (
+		add_comb_states comb_delta;
+		show_comb_states (remove_doubles !comb_states)
+	      );
+	      print_endline ("}")
       | _ -> show_error ("Incorrect number of arguments.\n")
   with Getopt.Error (error) -> ignore (Config.anon_args program_name error)
-    
-    
