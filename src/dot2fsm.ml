@@ -132,7 +132,7 @@ let rec show_wrappers arg_list =
 	Printf.printf("\t%s result;\n") r;
 	Printf.printf("\tOrigFn fn;\n");
 	Printf.printf("\tVALGRIND_GET_ORIG_FN(fn);\n");
-	Printf.printf("\tfsm(%s);\n") f;
+	Printf.printf("\tfsm(%s);\n") (String.uppercase f);
 	Printf.printf("\tCALL_FN_W_W(result, fn, %s);\n") args;
 	Printf.printf("\treturn result;\n}\n\n");
 	show_wrappers t
