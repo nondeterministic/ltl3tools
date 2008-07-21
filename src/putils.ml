@@ -181,7 +181,7 @@ let get_label delta =
     let label = extfind delta "[label=" in
     let deltap = String.sub 
       delta (label + 8) (String.length delta - label - 8) in
-    let max = extfind deltap "\"];" in
+    let max = extfind deltap "\"]" in
       rmchar (String.sub deltap 0 max) '\"'
   with _ -> "get_label Error"
 

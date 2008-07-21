@@ -1,3 +1,13 @@
+Mon Jul 21 10:04:05 EST 2008  <baueran@gmail.com>
+
+- src/dot2fsm.ml: added (not part of main distribution)
+- src/Makefile: reflect new file
+- src/putils.ml: in get_label, replaced extfind deltap "\"];" with
+  extfind deltap "\"]"
+- src/dot.ml: cosmetic clean-ups of parse2
+- src/fsmcrossprod.ml: added a semicolon to transition output,
+  added label attribute to state output
+
 Sun Jul 20 17:24:16 EST 2008  <baueran@gmail.com>
 
 - src/dot.ml: added

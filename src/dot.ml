@@ -40,31 +40,38 @@ let transitions = ref [ ]
 let rec parse2 dotfile =
   match dotfile with
       [] -> (!transitions, !states)
-    | h::t ->
-	let hh = rmchar h ' ' in
-	  if (safe_extfind hh "->" != (-1)) then (
-	    let src = (get_src_state hh) in
-	    let dst = (get_dst_state hh) in
-	    let label = (get_label hh) in
+    | h::rest -> let cur_line = rmchar h ' ' in
+	if (safe_extfind cur_line "->" != (-1)) then
+	  begin
+	    let src = (get_src_state cur_line) in
+	    let dst = (get_dst_state cur_line) in
+	    let label = (get_label cur_line) in
 	      transitions := !transitions @ [src, label, dst];
-	      parse2 t)
-	  else if ((safe_extfind hh "{" != (-1)) ||
-		     (safe_extfind hh "}" != (-1))) then
-	    parse2 t
-	  else if (safe_extfind hh "=" = -1) ||
-	    ((safe_extfind hh "=" >= 0 && safe_extfind hh "[label" >= 0)) then
-	      if (safe_extfind hh "=" = -1) then (
-		states := !states @ [hh];
-		parse2 t)
-	      else ( let upto = safe_extfind hh "[label" in
-		       states := !states @ [String.sub hh 0 upto];
-		       parse2 t )
-	  else
-	    parse2 t
-
+	      parse2 rest
+	  end
+	else if ((safe_extfind cur_line "{" != (-1)) ||
+		   (safe_extfind cur_line "}" != (-1))) then
+	  parse2 rest
+	else if (safe_extfind cur_line "=" = -1) ||
+	  ((safe_extfind cur_line "=" >= 0 && 
+	      safe_extfind cur_line "[label" >= 0)) then
+	    if (safe_extfind cur_line "=" = -1) then
+	      begin
+		states := !states @ [cur_line];
+		parse2 rest
+	      end
+	    else
+	      begin
+		let upto = safe_extfind cur_line "[label" in
+		  states := !states @ [String.sub cur_line 0 upto];
+		  parse2 rest
+	      end
+	else
+	  parse2 rest
+	    
 (* s Wrapper for [parse2].  For details, see comments for
-  [parse2].  *)
-
+   [parse2].  *)
+	      
 let parse dotfile =
   states := []; 
   transitions := [];
