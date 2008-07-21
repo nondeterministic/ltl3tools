@@ -111,11 +111,17 @@ let rec show_comb_states states =
       [] -> Printf.printf("")
     | (q1,q2)::t -> 
 	if ((int_of_string q1) = -1) then
-	  Printf.printf ("\"(%s, %s)\" [style=filled, color=red]\n") q1 q2
+	  Printf.printf
+	    ("\"(%s, %s)\" [label=\"(%s, %s)\" style=filled, color=red]\n") 
+	    q1 q2 q1 q2
 	else if ((int_of_string q2) = -1) then
-	  Printf.printf ("\"(%s, %s)\" [style=filled, color=green]\n") q1 q2
+	  Printf.printf
+	    ("\"(%s, %s)\" [label=\"(%s, %s)\" style=filled, color=green]\n")
+	    q1 q2 q1 q2
 	else
-	  Printf.printf ("\"(%s, %s)\" [style=filled, color=yellow]\n") q1 q2;
+	  Printf.printf
+	    ("\"(%s, %s)\" [label=\"(%s, %s)\" style=filled, color=yellow]\n")
+	    q1 q2 q1 q2;
 	show_comb_states t
 
 (*s [show_prod] takes as input [alldelta_product_automaton], a list of
@@ -128,7 +134,7 @@ let rec show_prod alldelta_product_automaton =
       [] -> Printf.printf("")
     | ((p1,p2), a, (q1,q2))::t ->
 	Printf.printf
-	  ("\"(%s, %s)\" -> \"(%s, %s)\" [label = \"%s\"]\n") p1 p2 q1 q2 a;
+	  ("\"(%s, %s)\" -> \"(%s, %s)\" [label = \"%s\"];\n") p1 p2 q1 q2 a;
 	show_prod t
 
 (*s Displays help text and options of the program on standard output *)
@@ -187,8 +193,6 @@ for reading the input files, etc. *)
 let _ = 
   try
     Getopt.parse_cmdline specs print_endline;
-    transitions := [];
-    states := [];
     match !ifiles with
 	h::t::[] ->
 	  let fsm1 = (read_file h) in
