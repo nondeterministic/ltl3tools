@@ -5,7 +5,7 @@ LTL3 Tools NEWS
 
 - Fixed a bug in nevertofsm which could lead to AT&T's fsmlibrary's reject
   of the generated automaton; that is, states can no longer have a trailing
-  zero.
+  zero which seems to confuse the fsmlibrary
 
 Thu Jul 17 13:28:18 EST 2008:           LTL3 tools 0.0.3
 

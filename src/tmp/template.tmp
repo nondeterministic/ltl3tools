@@ -1,0 +1,9 @@
+FUNCTION: {foo}
+RETURN: {int}
+ARGS: {x}
+ARG_LIST: {int x}
+
+FUNCTION: {bar}
+RETURN: {int}
+ARGS: {x}
+ARG_LIST: {int x}
