@@ -1,3 +1,9 @@
+Tue Jul 22 20:03:51 EST 2008  <baueran@gmail.com>
+
+- src/nevertofsm.ml: added normalise function
+- src/fsmcrossprod.ml: made output conform better with dot-file format
+  specification
+
 Mon Jul 21 10:04:05 EST 2008  <baueran@gmail.com>
 
 - src/dot2fsm.ml: added (not part of main distribution)
