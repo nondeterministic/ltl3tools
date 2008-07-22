@@ -30,10 +30,6 @@ nevertofsm: neverp.cmo
 	       neverl.cmo neverp.cmo  \
 	       nevertofsm.cmo
 
-dot2fsm:
-	ocamlc $(SOURCES) dot2fsm.ml
-	ocamlc -o dot2fsm $(OBJECTS) dot2fsm.cmo
-
 extractalphabet: neverp.cmo
 	ocamlc -c $(SOURCES) extractalphabet.ml
 	ocamlc -custom -ccopt -static \
