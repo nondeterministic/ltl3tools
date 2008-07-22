@@ -26,19 +26,24 @@ open Mutils
 
 let program_name = "nevertofsm"
 
+(* Gets a string representing a numberical value, possibly with a trailing 0, *)
+(* and returns that value as a string without trailing 0. *)
+
+let normalise num = string_of_int (int_of_string num)
+
 (* Some printing functions: *)
 
 let rec show_trans transitions =
   match transitions with
       [] -> Printf.printf("")
     | (p, a, q)::t -> 
-        Printf.printf ("%s %s %s\n") p q a;
+        Printf.printf ("%s %s %s\n") (normalise p) (normalise q) a;
         show_trans t
 
 let rec show_states states =
   match states with
       [] -> Printf.printf("")
-    | h::t -> Printf.printf ("%s\n") h; show_states t
+    | h::t -> Printf.printf ("%s\n") (normalise h); show_states t
 
  (* LTL2BA gives transitions such as (!b) meaning that the transition
     is enabled for all actions that do not contain "b".  Hence (!b)
