@@ -22,6 +22,7 @@ How to compile ltl2mon:
 
 If you are on i686 Linux, you do not have to compile the LTL3 tools
 as there are some statically linked binaries in the bin/ directory.
+Otherwise, follow these steps to compile the LTL3 tools:
 
   1. (as above)
   
