@@ -1,3 +1,7 @@
+Thu Dec 18 03:29:20 EST 2008  <baueran@gmail.com>
+
+- src/fsmcrossprod.ml: added merge_final function
+
 Tue Aug  5 20:09:55 EST 2008  <baueran@gmail.com>
 
 - README: small update
