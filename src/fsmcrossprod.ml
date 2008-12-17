@@ -65,6 +65,32 @@ let read_file filename =
   else
     ["The file does not exist"]
 
+(*s [merge_final] takes a list of transitions containing the states
+  and transitions of a monitor, i.e., a 3-valued Moore machine, and
+  returns the same Moore machine, but merges all $\top$ and $\bot$
+  states to one, respectively.  The $?$-states remain unaffected.
+  Notice, this is not an optimal minimization, but rather a
+  preparation for it. *)
+
+let merge_final transitions = 
+  let left_merged = 
+    List.map (fun ((a1,a2), b, c) ->
+		if ((int_of_string a1) < 0) then
+		  (("-1","1"), b, c)
+		else if ((int_of_string a2) < 0) then
+		  (("1","-1"), b, c)
+		else
+		  ((a1,a2), b, c)
+	     ) transitions in
+    remove_doubles 
+      (List.map (fun (a, b, (c1,c2)) ->
+		   if ((int_of_string c1) < 0) then
+		     (a, b, ("-1","1"))
+		   else if ((int_of_string c2) < 0) then
+		     (a, b, ("1","-1"))
+		   else
+		     (a, b, (c1,c2))
+		) left_merged)
 
 (*s [cproduct] takes as input two lists of states, and two lists of
   transitions of two \textbf{deterministic} finite state machines
@@ -210,9 +236,10 @@ let _ =
 				       alphabet)) in
 	    print_endline ("digraph G {");
 	    let comb_delta = (prune_transitions prod ("0", "0")) in
-	      show_prod comb_delta;
+	    let merged_delta = merge_final comb_delta in
+	      show_prod merged_delta;
 	      if (!colouring = true) then (
-		add_comb_states comb_delta;
+		add_comb_states merged_delta;
 		show_comb_states (remove_doubles !comb_states)
 	      );
 	      print_endline ("}")
