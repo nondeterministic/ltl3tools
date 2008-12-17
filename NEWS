@@ -3,6 +3,9 @@ LTL3 Tools NEWS
 
 [under development:]                    LTL3 tools 0.0.4
 
+- Final states of the monitor are now merged into one, respectively,
+  resulting in smaller monitors
+
 - Fixed a bug in nevertofsm which could lead to AT&T's fsmlibrary's reject
   of the generated automaton; that is, states can no longer have a trailing
   zero which seems to confuse the fsmlibrary
