@@ -1,3 +1,12 @@
+Tue Dec 23 06:19:03 EST 2008  <baueran@gmail.com>
+
+- src/minimise.ml: new
+- src/mutils.ml: add remove_doubles and explanation
+- src/gutils.ml: add explanation
+- src/putils.ml: add explanation
+- src/config.ml: change version number
+- src/fsmcrossprod.ml: use minimise.ml, add -m option
+
 Thu Dec 18 03:29:20 EST 2008  <baueran@gmail.com>
 
 - src/fsmcrossprod.ml: added merge_final function

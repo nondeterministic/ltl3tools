@@ -3,6 +3,7 @@ SOURCES = 	config.ml \
 		mutils.ml \
 		putils.ml \
 		gutils.ml \
+		minimise.ml \
 		dot.ml    \
 		getopt.ml
 
@@ -11,6 +12,7 @@ OBJECTS = 	config.cmo \
 		mutils.cmo \
 		putils.cmo \
 		gutils.cmo \
+		minimise.ml \
 		dot.cmo    \
 		getopt.cmo
 
@@ -61,4 +63,4 @@ doc:
 clean:
 	rm -rf nevertofsm nevertosymbols fsmcrossprod extractalphabet dot2fsm
 	rm -rf dist neverl.ml neverp.ml
-	rm -rf *.mli *.cmi *.cmo *.aux *.dvi *.log *.pdf
+	rm -rf a.out *.mli *.cmi *.cmo *.aux *.dvi *.log *.pdf

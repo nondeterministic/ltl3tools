@@ -16,6 +16,8 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *)
 
+(* Mutils - more general helper functions *)
+
 open String
 open List
 
@@ -78,11 +80,60 @@ let rec remove_doubles li =
       [] -> []
     | h::t -> h :: (remove_doubles (List.filter ((<>) h) t))
 
+(* if (0,1) and (1,0) are the same, then remove one of them in the
+   list li, and return the remaining elements of li.  *)
+        
+let rec remove_double_pairs li =
+  match li with
+      [] -> []
+    | (a,b)::t ->
+        if List.exists (fun (x,y) -> if (a = y) && (b = x) then 
+                          true
+                        else 
+                          false
+                       ) t then
+          remove_double_pairs t
+        else
+          (a,b) :: remove_double_pairs t
+
+let rec unpair_list li =
+  match li with
+      [] -> []
+    | (a,b)::t -> [a;b] @ unpair_list t
+
+let rec zip l m =
+  match l, m with
+    | [], _ -> []
+    | _, [] -> []
+    | la::ls, ma::ms -> (la, ma) :: zip ls ms
+
+(* Cartesian product of set xs and ys, represented as lists,
+   respectively. *)
+
+let rec cartesian xs ys =
+  match xs, ys with
+    | [], _ -> []
+    | _, [] -> []
+    | xs, ys -> 
+        List.map (fun x -> (zip [x] ys)) xs @ cartesian xs (List.tl ys);;
+
 let rec powerset =
   function
     | [] -> [[]]
     | h::t -> let p = powerset t in
         p @ List.map (fun x -> h::x) p
+
+(* set1 - set2, where set1 and set2 are represented as lists *)
+
+let rec diff set1 set2 = 
+  match set1, set2 with
+      [], s2 -> []
+    | s1, [] -> s1
+    | s1::ss1, s2 ->
+        if List.mem s1 s2 then 
+          diff ss1 s2
+        else 
+          s1 :: (diff ss1 s2) 
 
 (* ["b"; "a"] -> ["a"; "b"] *)
 
