@@ -16,6 +16,8 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *)
 
+(* Gutils - general graph helper functions *)
+
 open List
 open Mutils
 open Printf

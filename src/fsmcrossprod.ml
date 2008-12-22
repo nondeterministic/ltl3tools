@@ -25,6 +25,7 @@ open String
 open Putils
 open Mutils
 open Gutils
+open Minimise
 open Dot
 (*i*)
 
@@ -47,6 +48,11 @@ let comb_states = ref [ ]
 
 let colouring = ref false
 
+(*s True if the user wants the monitor FSM minimised in the end,
+  otherwise false.  *)
+
+let minimise = ref false
+
 (*s [read_file] reads the contents of a file named [filename], and
   returns them as a string list *)
 
@@ -64,33 +70,6 @@ let read_file filename =
 	List.rev !lines
   else
     ["The file does not exist"]
-
-(*s [merge_final] takes a list of transitions containing the states
-  and transitions of a monitor, i.e., a 3-valued Moore machine, and
-  returns the same Moore machine, but merges all $\top$ and $\bot$
-  states to one, respectively.  The $?$-states remain unaffected.
-  Notice, this is not an optimal minimization, but rather a
-  preparation for it. *)
-
-let merge_final transitions = 
-  let left_merged = 
-    List.map (fun ((a1,a2), b, c) ->
-		if ((int_of_string a1) < 0) then
-		  (("-1","1"), b, c)
-		else if ((int_of_string a2) < 0) then
-		  (("1","-1"), b, c)
-		else
-		  ((a1,a2), b, c)
-	     ) transitions in
-    remove_doubles 
-      (List.map (fun (a, b, (c1,c2)) ->
-		   if ((int_of_string c1) < 0) then
-		     (a, b, ("-1","1"))
-		   else if ((int_of_string c2) < 0) then
-		     (a, b, ("1","-1"))
-		   else
-		     (a, b, (c1,c2))
-		) left_merged)
 
 (*s [cproduct] takes as input two lists of states, and two lists of
   transitions of two \textbf{deterministic} finite state machines
@@ -187,6 +166,8 @@ let show_help =
       Printf.printf
         (" -h, --help        Display this help information\n");
       Printf.printf
+	(" -m, --minimise    Minimise monitor\n");
+      Printf.printf
         (" -v, --version     Display version information\n\n");
       Printf.printf
         ("Report bugs to <baueran@gmail.com>.\n");
@@ -202,6 +183,7 @@ let specs =
   ('c', "colour", (Getopt.set colouring true), None);
   ('v', "version", (Config.show_version program_name), None);
   ('h', "help", show_help, None);
+  ('m', "minimise", (Getopt.set minimise true), None);
   ('?', "", show_help, None)
 ]
 
@@ -236,12 +218,19 @@ let _ =
 				       alphabet)) in
 	    print_endline ("digraph G {");
 	    let comb_delta = (prune_transitions prod ("0", "0")) in
-	    let merged_delta = merge_final comb_delta in
-	      show_prod merged_delta;
-	      if (!colouring = true) then (
-		add_comb_states merged_delta;
+ 	    let minimised_delta = Minimise.minimise comb_delta alphabet in
+	      if !minimise then 
+		show_prod minimised_delta
+	      else
+		show_prod comb_delta;
+ 	      if (!colouring = true) then (
+		if !minimise then 
+		  add_comb_states minimised_delta
+		else
+		  add_comb_states comb_delta;
 		show_comb_states (remove_doubles !comb_states)
 	      );
 	      print_endline ("}")
       | _ -> show_error ("Incorrect number of arguments.\n")
   with Getopt.Error (error) -> ignore (Config.anon_args program_name error)
+    

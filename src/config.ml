@@ -19,7 +19,7 @@
 
 open Printf
 
-let version = "0.0.3"
+let version = "0.0.4"
 let copyright = "Copyright (c) 2008 by Andreas Bauer <baueran@gmail.com>"
 
 let anon_args program_name option =
