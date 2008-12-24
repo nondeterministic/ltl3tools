@@ -1,7 +1,7 @@
 LTL3 Tools NEWS
 -=-=-=-=-=-=-=-
 
-[under development:]                    LTL3 tools 0.0.4
+Thu Dec 25 01:29:08 EST 2008            LTL3 tools 0.0.4
 
 - Added -m option to fsmcrossprod in order to minimise monitor FSM
 
