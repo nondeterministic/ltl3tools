@@ -95,8 +95,15 @@ let rec marked_states2 trans marked unmarked sigma =
     | marked, (s1, s2)::umrest ->
         let new_marked = find_new_marked (s1, s2) trans marked sigma in
           marked_states2 trans new_marked umrest sigma
+
+(*s This function takes a list of transitions, [trans], an alphabet,
+  [sigma], and returns a list of state tuples, such that each tuple
+  $(x, y)$ consists of two states that are distinguishable in the
+  sense that different output symbols are associated with them. See
+  also function [unmarked_states]. *)
             
-let marked_states states trans sigma =
+let marked_states trans sigma =
+  let states = extract_states trans in
   let spairs = unlist (cartesian states states) in
   let unmarked = List.filter (fun (s1, s2) ->
                                 if (is_same s1 s2) then
@@ -106,15 +113,23 @@ let marked_states states trans sigma =
   let marked = diff spairs unmarked in
     marked_states2 trans marked unmarked sigma
 
+(*s This function takes a list of transitions, [trans], an alphabet,
+  [sigma], and returns a list of state tuples, such that each tuple
+  $(x, y)$ consists of two states that are INdistinguishable in the
+  sense that their output values are the same and that they lead to
+  the same states on the same input symbol.  See also function
+  [marked_states]. *)
+
 let unmarked_states trans sigma = 
   let states = extract_states trans in
   let all_pairs = unlist (cartesian states states) in
-  let marked = marked_states states trans sigma in
+  let marked = marked_states trans sigma in
     diff all_pairs marked
 
 (*s [state] is a state (x, y), and [unmarked_states] a list of
   unmarked state pairs, such that the function returns a list of type
-  [(a', a') list] containing all equivalent states to (x, y). *)
+  [(a', a') list] containing all equivalent states to (x, y), where of
+  course (x,y) is part of this list. *)
 
 let find_eq_class state unmarked_states =
   let eq = List.filter (fun (s1, s2) ->
@@ -123,6 +138,9 @@ let find_eq_class state unmarked_states =
   let eq_nodoubles = remove_double_pairs eq in
   let eq_list = unpair_list eq_nodoubles in
     remove_doubles eq_list
+
+(* Returns a list of equivalent states, see also function
+   [find_eq_class]. *)
 
 let eq_states transitions sigma =
   let trans = merge_final transitions in
@@ -160,4 +178,3 @@ let minimise transitions sigma =
        (List.map (fun state_list ->
 		    eq_trans state_list transitions sigma
 		 ) (eq_states transitions sigma)))
-    
