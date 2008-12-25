@@ -1,6 +1,11 @@
 LTL3 Tools NEWS
 -=-=-=-=-=-=-=-
 
+(under development)                     LTL3 tools 0.0.5
+
+- Fixed a bug in the minimisation algorithm which would not minimise
+  ?-states properly when X-operators appeared in the formula
+
 Thu Dec 25 01:29:08 EST 2008            LTL3 tools 0.0.4
 
 - Added -m option to fsmcrossprod in order to minimise monitor FSM

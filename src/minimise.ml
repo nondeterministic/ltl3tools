@@ -85,7 +85,7 @@ let rec find_new_marked (s1, s2) trans marked sigma =
     | a::srest ->
         let new_pair = ((delta s1 a trans), (delta s2 a trans)) in
           if List.mem new_pair marked then
-            find_new_marked (s1, s2) trans (new_pair :: marked) srest
+            find_new_marked (s1, s2) trans ((s1, s2) :: marked) srest
           else
             find_new_marked (s1, s2) trans marked srest
 

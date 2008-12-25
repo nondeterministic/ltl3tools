@@ -1,3 +1,9 @@
+Thu Dec 25 22:51:01 EST 2008  <baueran@gmail.com>
+
+- src/minimise.ml: fix bug in find_new_marked: add (s1, s2) to marked
+  states rather than the newly found state pairs
+- ChangeLog, NEWS: reflect changes
+
 Thu Dec 25 01:29:08 EST 2008  <baueran@gmail.com>
 
 - Makefile, ChangeLog, NEWS: add release notes
