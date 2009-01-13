@@ -57,38 +57,44 @@ let rec show_states states =
     appear in the alphabet.  All occurrences of (!b), etc. are
     gone. *)
 
-let rec unfold_trans transitions alpha =
-  match transitions with
-      [] -> []
-    | (q, a, p)::t -> 
-        (List.map 
-           (fun c -> (q, c, p)) (sigma_filter (get_action_list a) alpha)) 
-        @ (unfold_trans t alpha)
+let unfold_trans transitions alpha =
+  let rec utr transitions =
+    match transitions with
+	[] -> []
+      | (q, a, p)::t ->
+          (List.map
+             (fun c -> (q, c, p)) (sigma_filter (get_action_list a) alpha))
+          @ utr t in
+    utr transitions
 	  
 (* LTL2BA gives a (1) transition to mean a universal transition.  See
    comment for unfold_trans; unfold_sigma replaces all (1)
    transitions with proper transitions from the alphabet. *)
           
-let rec unfold_sigma transitions alpha =
-  match transitions with
-      [] -> []
-    | (q, a, p)::t -> 
-        if (a = "(1)") then 
-          (List.map (fun c -> (q, c, p)) alpha) @ (unfold_sigma t alpha)
-        else [(q, a, p)] @ (unfold_sigma t alpha)
+let unfold_sigma transitions alpha =
+  let rec usr transitions =
+    match transitions with
+	[] -> []
+      | (q, a, p)::t -> 
+          if (a = "(1)") then 
+            (List.map (fun c -> (q, c, p)) alpha) @ usr t
+          else [(q, a, p)] @ usr t in
+    usr transitions
 
 (* This function is only for debugging purposes, and not actually
    called by the rest of the code.  *)
 
- let rec show_alpha a =
-   match a with
-       [] -> Printf.printf ("");
-     | h::t ->
-         Printf.printf("%s") h;
-         if (List.length t >= 1) then
-           Printf.printf(", ");
-         show_alpha t
+let rec show_alpha a =
+  match a with
+      [] -> Printf.printf ("");
+    | h::t ->
+        Printf.printf("%s") h;
+        if (List.length t >= 1) then
+          Printf.printf(", ");
+        show_alpha t
 	  
+let unprocessed_trans = ref []
+
 let main () =
   try
     let lexbuf = Lexing.from_channel stdin in
@@ -104,15 +110,16 @@ let main () =
 	      remove_doubles (
 		extract_labels
 		  !Declarations.transitions) ) ) ) );
-    show_trans
-      (remove_doubles
-	 (unfold_trans
-	    (unfold_sigma
-	       !Declarations.transitions !Declarations.alphabet)
-	    !Declarations.alphabet));
-    show_states !Declarations.states;
-    exit 0
-      
+    unprocessed_trans := 
+      unfold_trans
+	(unfold_sigma
+	   !Declarations.transitions !Declarations.alphabet)
+	!Declarations.alphabet;
+    let processed_trans = remove_doubles !unprocessed_trans in
+      show_trans processed_trans;
+      show_states !Declarations.states;
+      exit 0
+	
 let show_help = 
   Some (
     fun () ->

@@ -1,6 +1,10 @@
 LTL3 Tools NEWS
 -=-=-=-=-=-=-=-
 
+Under development                       LTL3 tools 0.0.6
+
+- Performance improvements
+
 Fri Dec 26 04:36:21 EST 2008            LTL3 tools 0.0.5
 
 - Fixed a bug in the minimisation algorithm which would not minimise

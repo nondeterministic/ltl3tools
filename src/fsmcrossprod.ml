@@ -84,7 +84,7 @@ let read_file filename =
   and the entire entry corresponds to a single transition in the
   product automaton. *)
 
-let rec cproduct states1 states2 delta1 delta2 sigma =
+let cproduct states1 states2 delta1 delta2 sigma =
   let s1 = states1 @ ["-1"] in
   let s2 = states2 @ ["-1"] in
     List.map (fun p1 ->
