@@ -19,8 +19,8 @@
 
 open Printf
 
-let version = "0.0.5"
-let copyright = "Copyright (c) 2008 by Andreas Bauer <baueran@gmail.com>"
+let version = "0.0.6"
+let copyright = "Copyright (c) 2008-2009 by Andreas Bauer <baueran@gmail.com>"
 
 let anon_args program_name option =
   Printf.printf ("%s: %s\n") program_name option;
