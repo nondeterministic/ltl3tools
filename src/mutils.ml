@@ -76,9 +76,12 @@ let isint c =
 (* removes all double occurrences of an item in a list *)
 
 let rec remove_doubles li =
-  match li with
-      [] -> []
-    | h::t -> h :: (remove_doubles (List.filter ((<>) h) t))
+match li with
+    [] -> []
+  | h::t -> if List.mem h t then 
+      remove_doubles t
+    else 
+      h::(remove_doubles t)
 
 (* if (0,1) and (1,0) are the same, then remove one of them in the
    list li, and return the remaining elements of li.  *)
@@ -144,4 +147,8 @@ let rec sort lst =
  and insert elt lst =
    match lst with
      [] -> [elt]
-   | head :: tail -> if elt <= head then elt :: lst else head :: insert elt tail
+   | head :: tail -> 
+       if elt <= head then
+	 elt :: lst 
+       else 
+	 head :: insert elt tail
