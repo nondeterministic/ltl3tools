@@ -62,44 +62,12 @@ let rec break_label label =
        if (String.length !s >= 1) then (
          try
            let index = String.index !s '&' in
-             (* Printf.printf ("%s\n") (String.sub s 0 index); *)
              (String.sub !s 0 index) ::
                get_action_list
                (String.sub !s (index + 2) (String.length !s - (index + 2)))
          with _ -> [!s]
        ) else [!s]
    )
-
- (* Let action be a list of strings which together form an action,
-    e.g., if action is ["!a"; "b"], then the actual action "!a&&b" is
-    meant.  Sigma is an alphabet which is a list of strings (see also
-    unfold_trans for a better description).  sigma_filter then returns
-    those elements from the alphabet sigma, which "match" the action.
-    E.g. ["!a"] would match all elements of sigma that do not contain
-    an a, e.g., sigma_filter ["!a"] ["a"; "b"; "a&&b"; "<empty>"]
-    would return ["b"; "<empty>"].  *)
-     
- let rec sigma_filter action sigma = 
-   match action with
-       [] -> sigma
-     | h::t ->
-         if (h.[0] = '!') then (
-           let sigmap = 
-             List.filter (fun s -> if ((safe_extfind s (lchop h)) = -1) then 
-                            true 
-                          else 
-                            false) sigma in
-             sigma_filter t sigmap
-         )
-         else
-           (
-             let sigmap =
-               List.filter (fun s -> if ((safe_extfind s h) != -1) then 
-                              true 
-                            else 
-                              false) sigma in
-               sigma_filter t sigmap
-           )
 
 (* removes (, ), !, and whitespaces from actions *)
 
@@ -119,6 +87,44 @@ let rec extract_propositions from_label =
           (extract_propositions 
              (String.sub !l (upto + 2) ((String.length !l) - (upto + 2))))
     with _ -> [!l]
+
+(* If action act contains proposition x return true otherwise false *)
+(* Note that act may be "mb&&md" and x may be "m" or "md", etc. *)
+
+let act_contains (act : string) (x : string) =
+  let act = ref (extract_propositions act) in
+    List.mem x !act
+
+ (* Let action be a list of strings which together form an action,
+    e.g., if action is ["!a"; "b"], then the actual action "!a&&b" is
+    meant.  Sigma is an alphabet which is a list of strings (see also
+    unfold_trans for a better description).  sigma_filter then returns
+    those elements from the alphabet sigma, which "match" the action.
+    E.g. ["!a"] would match all elements of sigma that do not contain
+    an a, e.g., sigma_filter ["!a"] ["a"; "b"; "a&&b"; "<empty>"]
+    would return ["b"; "<empty>"].  *)
+     
+let rec sigma_filter action sigma =
+  match action with
+      [] -> sigma
+    | h::t ->
+        if (h.[0] = '!') then (
+          let sigmap =
+            List.filter (fun s -> if not(act_contains s (lchop h)) then
+                           true
+                         else
+                           false) sigma in
+            sigma_filter t sigmap
+        )
+        else
+          (
+            let sigmap =
+              List.filter (fun s -> if act_contains s h then
+                             true
+                           else
+                             false) sigma in
+              sigma_filter t sigmap
+          )
 
 (* [("0", "(!a && b)", "0")] returns ["a"; "b"; ... ]. *)
 
