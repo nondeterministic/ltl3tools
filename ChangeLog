@@ -1,3 +1,10 @@
+Fri Jan 16 15:52:45 EST 2009  <baueran@gmail.com>
+
+- src/putils.ml:sigma_filter: fix bug that would corrupt output when
+  the proposition in question was a substring of another proposition
+  in sigma
+- src/putils.ml:act_contains: new
+
 Fri Jan 16 12:52:48 EST 2009  <baueran@gmail.com>
 
 - src/*.ml: rewrote almost every function slightly to improve performance
