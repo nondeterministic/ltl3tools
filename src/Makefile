@@ -7,50 +7,46 @@ SOURCES = 	config.ml \
 		dot.ml    \
 		getopt.ml
 
-OBJECTS = 	config.cmo \
-		declarations.cmo \
-		mutils.cmo \
-		putils.cmo \
-		gutils.cmo \
-		minimise.ml \
-		dot.cmo    \
-		getopt.cmo
+OBJECTS = 	config.cmx \
+		declarations.cmx \
+		mutils.cmx \
+		putils.cmx \
+		gutils.cmx \
+		minimise.cmx \
+		dot.cmx    \
+		getopt.cmx
 
 all: nevertofsm nevertosymbols extractalphabet fsmcrossprod
 
-neverp.cmo:
+neverp.cmx:
 	ocamlyacc neverp.mly
-	ocamlc -c neverp.mli
+	ocamlopt -c neverp.mli
 	ocamllex neverl.mll
-	ocamlc -c $(SOURCES) neverl.ml neverp.ml
+	ocamlopt -c $(SOURCES) neverl.ml neverp.ml
 
-nevertofsm: neverp.cmo
-	ocamlc -c $(SOURCES) nevertofsm.ml
-	ocamlc -custom -ccopt -static \
-	       -o nevertofsm          \
+nevertofsm: neverp.cmx
+	ocamlopt -c $(SOURCES) nevertofsm.ml
+	ocamlopt -o nevertofsm          \
 	       $(OBJECTS)             \
-	       neverl.cmo neverp.cmo  \
-	       nevertofsm.cmo
+	       neverl.cmx neverp.cmx  \
+	       nevertofsm.cmx
 
-extractalphabet: neverp.cmo
-	ocamlc -c $(SOURCES) extractalphabet.ml
-	ocamlc -custom -ccopt -static \
-	        -o extractalphabet    \
+extractalphabet: neverp.cmx
+	ocamlopt -c $(SOURCES) extractalphabet.ml
+	ocamlopt -o extractalphabet    \
 	        $(OBJECTS)            \
-		neverl.cmo neverp.cmo \
-		extractalphabet.cmo
+		neverl.cmx neverp.cmx \
+		extractalphabet.cmx
 
-nevertosymbols: neverp.cmo
-	ocamlc -c $(SOURCES) nevertosymbols.ml
-	ocamlc -custom -ccopt -static \
-	       -o nevertosymbols      \
+nevertosymbols: neverp.cmx
+	ocamlopt -c $(SOURCES) nevertosymbols.ml
+	ocamlopt -o nevertosymbols      \
 	        $(OBJECTS)            \
-		neverl.cmo neverp.cmo \
-		nevertosymbols.cmo
+		neverl.cmx neverp.cmx \
+		nevertosymbols.cmx
 
 fsmcrossprod:
-	ocamlc -custom -ccopt -static \
-	       -I +camlp4 -pp camlp4of.opt \
+	ocamlopt -I +camlp4 -pp camlp4of.opt \
 		$(SOURCES)            \
 		fsmcrossprod.ml       \
 		-o fsmcrossprod
@@ -63,4 +59,4 @@ doc:
 clean:
 	rm -rf nevertofsm nevertosymbols fsmcrossprod extractalphabet dot2fsm
 	rm -rf dist neverl.ml neverp.ml
-	rm -rf a.out *.mli *.cmi *.cmo *.aux *.dvi *.log *.pdf
+	rm -rf a.out *.mli *.cmi *.cmx *.cmo *.aux *.dvi *.log *.pdf

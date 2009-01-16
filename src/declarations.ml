@@ -1,6 +1,6 @@
 (* 
    ltl2mon - converts an LTL formula into a FSM
-   Copyright (c) 2008 Andreas Bauer <baueran@gmail.com>
+   Copyright (c) 2008-2009 Andreas Bauer <baueran@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

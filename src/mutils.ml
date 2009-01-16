@@ -1,6 +1,6 @@
 (* 
    ltl2mon - converts an LTL formula into a FSM
-   Copyright (c) 2008 Andreas Bauer <baueran@gmail.com>
+   Copyright (c) 2008-2009 Andreas Bauer <baueran@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,18 +32,18 @@ let rec unlist list =
     | [] -> []
 
 let extfind str sub =
-  let sublen = String.length sub in
-    if sublen = 0 then
+  let sublen = ref (String.length sub) in
+    if !sublen = 0 then
       0
     else
       let found = ref 0 in
-      let len = String.length str in
+      let len = ref (String.length str) in
         try
-          for i = 0 to len - sublen do
+          for i = 0 to !len - !sublen do
             let j = ref 0 in
               while String.unsafe_get str (i + !j) = String.unsafe_get sub !j do
                 incr j;
-                if !j = sublen then begin found := i; raise Exit; end;
+                if !j = !sublen then begin found := i; raise Exit; end;
               done;
           done;
           raise Invalid_string
@@ -60,14 +60,14 @@ let lchop s =
 
 let string_of_char = String.make 1
 
-let rec rmchar s c =
-  if (String.length s >= 1) then (
-    if (String.get s 0 = c) then
-      rmchar (lchop s) c
-    else
-      (string_of_char (String.get s 0)) ^ (rmchar (lchop s) c)
-  )
-  else ""
+let rmchar (s : string) (c : char) =
+  let new_s = ref "" in
+  let slength = ref (String.length s - 1) in
+    for i = 0 to !slength do
+      if s.[i] != c then
+	new_s := !new_s ^ (string_of_char s.[i])
+    done;
+    !new_s
 
 let isint c =
   let integers = "0123456789" in
