@@ -1,6 +1,6 @@
 (* 
    ltl2mon - converts an LTL formula into a FSM
-   Copyright (c) 2008 Andreas Bauer <baueran@gmail.com>
+   Copyright (c) 2008-2009 Andreas Bauer <baueran@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,8 +44,8 @@ let rec break_label label =
                   end;
                 label := lchop (!label);
             done;
-            [!action] @ break_label !label;
-          with Exit -> [!action] @ break_label !label;
+            !action :: break_label !label;
+          with Exit -> !action :: break_label !label;
       end
     else []
 
@@ -58,16 +58,16 @@ let rec break_label label =
    else (
      let sss = rmchar l ' ' in
      let ss = rmchar sss ')' in
-     let s = rmchar ss '(' in
-       if (String.length s >= 1) then (
+     let s = ref (rmchar ss '(') in
+       if (String.length !s >= 1) then (
          try
-           let index = String.index s '&' in
+           let index = String.index !s '&' in
              (* Printf.printf ("%s\n") (String.sub s 0 index); *)
-             [(String.sub s 0 index)] @
+             (String.sub !s 0 index) ::
                get_action_list
-               (String.sub s (index + 2) (String.length s - (index + 2)))
-         with _ -> [s]
-       ) else [s]
+               (String.sub !s (index + 2) (String.length !s - (index + 2)))
+         with _ -> [!s]
+       ) else [!s]
    )
 
  (* Let action be a list of strings which together form an action,
@@ -164,27 +164,27 @@ let rec actions_to_alphabet list_of_actions =
 		else
 		  "(" ^ a ^ ")") list_of_actions
     
-let get_src_state delta =
+let get_src_state (delta : string) =
   try
     let max = extfind delta "->" in
       rmchar (String.sub delta 0 max) '\"'
   with _ -> "get_src_state Error"
 
-let get_dst_state delta =
+let get_dst_state (delta : string) =
   try
     let label = extfind delta "[label" in
-    let deltap = String.sub delta 0 (label) in
-    let from = ((extfind deltap "->") + 2) in
-      rmchar (String.sub deltap from ((String.length deltap - from))) '\"'
+    let deltap = ref (String.sub delta 0 (label)) in
+    let from = ((extfind !deltap "->") + 2) in
+      rmchar (String.sub !deltap from ((String.length !deltap - from))) '\"'
   with _ -> "get_dst_state Error"
 
-let get_label delta =
+let get_label (delta : string) =
   try
-    let label = extfind delta "[label=" in
-    let deltap = String.sub 
-      delta (label + 8) (String.length delta - label - 8) in
-    let max = extfind deltap "\"]" in
-      rmchar (String.sub deltap 0 max) '\"'
+    let label = ref (extfind delta "[label=") in
+    let deltap = ref
+      (String.sub delta (!label + 8) (String.length delta - !label - 8)) in
+    let max = extfind !deltap "\"]" in
+      rmchar (String.sub !deltap 0 max) '\"'
   with _ -> "get_label Error"
 
 let rec remove_universal_transitions trans =

@@ -1,7 +1,7 @@
 (* 
    This is part of the LTL3 tools (see http://ltl3tools.sf.net/)
 
-   Copyright (c) 2008 Andreas Bauer <baueran@gmail.com>
+   Copyright (c) 2008-2009 Andreas Bauer <baueran@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

@@ -1,7 +1,7 @@
 (* 
    This is part of the LTL3 tools (see http://ltl3tools.sf.net/)
 
-   Copyright (c) 2008 Andreas Bauer <baueran@gmail.com>
+   Copyright (c) 2008-2009 Andreas Bauer <baueran@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,15 +19,8 @@
 
 (*i*)
 open Mutils
+open Gutils
 (*i*)
-
-(*s Takes a list of transitions, [(a' * a' * a') list], and returns
-  the list of states implicitly defined by this list. *)
-
-let extract_states transitions =
-  remove_doubles (sort
-		    (List.map (fun (a,b,c) -> a) transitions
-                     @ List.map (fun (a,b,c) -> c) transitions))
 
 (*s [merge_final] takes a list of transitions containing the states
   and transitions of a monitor, i.e., a 3-valued Moore machine, and
@@ -67,14 +60,18 @@ let initially_the_same (a, b) (c, d) =
 
 (* Takes a state [state], an action [action], and a list of
    transitions [transitions], then returns the function defined by the
-   transitions, $\delta(state, action)$. *)
+   transitions, $\delta(state, action)$.  Notice, this is a
+   polymorphic variant of Gutils.get_dest, hence less efficient! *)
 
 let delta state action transitions =
-  match List.find (fun (a, b, c) -> 
-                     if (a = state) && (b = action) then 
-                       true 
+  match List.find (fun (a, b, _) -> 
+                     if (a = state) then
+		       if (b = action) then 
+			 true 
+		       else 
+			 false
                      else false) transitions  
-  with (a,b,c) -> c
+  with (_,_,c) -> c
 
 (* The following functions take responsibility to determine the set of
    marked and unmarked states of the well-known FSM minimisation
@@ -110,17 +107,6 @@ let rec marked_states trans marked unmarked sigma =
     else
       marked_states trans new_marked (diff unmarked new_marked) sigma
 
-(* let marked_states trans sigma = *)
-(*   let states = extract_states trans in *)
-(*   let spairs = unlist (cartesian states states) in *)
-(*   let unmarked = List.filter (fun (s1, s2) -> *)
-(*                                 if (initially_the_same s1 s2) then *)
-(*                                   true *)
-(*                                 else *)
-(*                                   false) spairs in *)
-(*   let marked = diff spairs unmarked in *)
-(*     marked_states2 trans marked unmarked sigma *)
-
 (*s This function takes a list of transitions, [trans], an alphabet,
   [sigma], and returns a list of state tuples, such that each tuple
   $(x, y)$ consists of two states that are INdistinguishable in the
@@ -129,8 +115,8 @@ let rec marked_states trans marked unmarked sigma =
   [marked_states]. *)
 
 let unmarked_states trans sigma = 
-  let states = extract_states trans in
-  let all_pairs = unlist (cartesian states states) in
+  let states = ref (Gutils.get_states trans) in
+  let all_pairs = unlist (cartesian !states !states) in
 
   let init_unmarked = List.filter (fun (s1, s2) ->
 				     if (initially_the_same s1 s2) then
@@ -140,12 +126,6 @@ let unmarked_states trans sigma =
   let init_marked = diff all_pairs init_unmarked in
   let marked = marked_states trans init_marked init_unmarked sigma in
     diff all_pairs marked
-
-(* let unmarked_states trans sigma =  *)
-(*   let states = extract_states trans in *)
-(*   let all_pairs = unlist (cartesian states states) in *)
-(*   let marked = marked_states trans sigma in *)
-(*     diff all_pairs marked *)
 
 (*s [state] is a state (x, y), and [unmarked_states] a list of
   unmarked state pairs, such that the function returns a list of type
@@ -165,14 +145,14 @@ let find_eq_class state unmarked_states =
 
 let eq_states transitions sigma =
   let trans = merge_final transitions in
-  let states = extract_states trans in
+  let states = ref (Gutils.get_states trans) in
   let unmarked_state_pairs = unmarked_states trans sigma in
     remove_doubles 
       (sort
 	 (List.map 
             (fun (s1, s2) -> 
                find_eq_class (s1, s2) unmarked_state_pairs
-            ) states))
+            ) !states))
 
 (* The argument [eq_state] is a list of states, [(a', a') list], which
    represents an equivalence class.  The function then returns a list
@@ -181,8 +161,8 @@ let eq_states transitions sigma =
    automaton. *)
 
 let eq_trans eq_state transitions sigma =
-  let transitions = merge_final transitions in
-  let local_unmarked_states = unmarked_states transitions sigma in
+  let transitions = ref (merge_final transitions) in
+  let local_unmarked_states = unmarked_states !transitions sigma in
   let (s1, s2) = List.hd eq_state in
     List.map 
       (fun a ->
@@ -191,15 +171,15 @@ let eq_trans eq_state transitions sigma =
 			if ((p = (s1, s2)) && (act = a)) then 
 			  true 
 			else 
-			  false) transitions in
+			  false) !transitions in
 	   (* Result transition: *)
 	   ((s1, s2), a, List.hd (find_eq_class z local_unmarked_states))
       ) sigma
       
 let minimise transitions sigma =
-  remove_doubles
-    (sort
-       (unlist 
+  sort
+    (remove_doubles
+       (unlist
 	  (List.map (fun state_list ->
 		       eq_trans state_list transitions sigma
 		    ) (eq_states transitions sigma))))

@@ -1,7 +1,7 @@
 (* 
    This is part of the LTL3 tools (see http://ltl3tools.sf.net/)
 
-   Copyright (c) 2008 Andreas Bauer <baueran@gmail.com>
+   Copyright (c) 2008-2009 Andreas Bauer <baueran@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@ open String
 open Putils
 open Mutils
 open Gutils
-open Minimise
 open Dot
 (*i*)
 
@@ -85,15 +84,21 @@ let read_file filename =
   product automaton. *)
 
 let cproduct states1 states2 delta1 delta2 sigma =
-  let s1 = states1 @ ["-1"] in
-  let s2 = states2 @ ["-1"] in
-    List.map (fun p1 ->
-		List.map (fun p2 ->
-                            List.map (fun a -> 
-					let q1 = get_dest p1 a delta1 in
-					let q2 = get_dest p2 a delta2 in
-                                          ((p1,p2), a, (q1, q2))
-                                     ) sigma) s2) s1
+  let s1 = "-1" :: states1 in
+  let s2 = "-1" :: states2 in
+  let new_t = ref [] in
+    ignore 
+      (List.map 
+	 (fun p1 ->
+	    List.map
+	      (fun p2 ->
+		 List.map
+		   (fun a -> 
+		      let q1 = Gutils.get_dest p1 a delta1 in
+		      let q2 = Gutils.get_dest p2 a delta2 in
+			new_t := ((p1,p2), a, (q1, q2)) :: !new_t
+		   ) sigma) s2) s1);
+    !new_t
 
 (*s Adds the combined states of the product automaton, once built, to
   a global data structure, [comb_states]. *)
@@ -102,7 +107,8 @@ let rec add_comb_states alldelta_product_automaton =
   match alldelta_product_automaton with
       [] -> comb_states := !comb_states
     | ((p1,p2), a, (q1,q2))::t -> 
-	comb_states := !comb_states @ [(p1,p2); (q1,q2)];
+	comb_states := (p1,p2) :: !comb_states;
+	comb_states := (q1,q2) :: !comb_states;
 	add_comb_states t
 
 (*s [show_comb_states] prints [states] on standard output using
@@ -204,33 +210,33 @@ let _ =
     match !ifiles with
 	h::t::[] ->
 	  let fsm1 = (read_file h) in
-	  let (trans1, states1) = Dot.parse fsm1 in
-	  let fsm2 = (read_file t) in
+	  let trans1 = ref (Dot.parse fsm1) in
+	  let states1 = ref (Gutils.get_states !trans1) in
 	  let alphabet = 
-	    actions_to_alphabet (
-	      powerset (
-		sort (
-		  remove_doubles (
-		    extract_labels trans1)))) in
-	  let (trans2, states2) = Dot.parse fsm2 in
-	  let prod = unlist (unlist (cproduct states1 states2 
-				       trans1 trans2 
-				       alphabet)) in
-	    print_endline ("digraph G {");
-	    let comb_delta = (prune_transitions prod ("0", "0")) in
- 	    let minimised_delta = Minimise.minimise comb_delta alphabet in
+	    ref (actions_to_alphabet (
+		   powerset (
+		     sort (
+		       remove_doubles (
+			 extract_labels !trans1))))) in
+	  let fsm2 = (read_file t) in
+	  let trans2 = ref (Dot.parse fsm2) in
+	  let states2 = ref (Gutils.get_states !trans2) in
+	    print_endline ("digraph G {"); 
+	    (* Now build synchronous product of fsm1 and fsm2. *)
+ 	    let s_prod = cproduct !states1 !states2 !trans1 !trans2 !alphabet in
+	    (* Remove unreachable states in the product automaton. *)
+	    let pruned_s_prod = ref (prune_transitions s_prod ("0", "0")) in
+ 	    let min_prod = pruned_s_prod in
+	      (* Minimise, if -m switch was set. *)
 	      if !minimise then 
-		show_prod minimised_delta
-	      else
-		show_prod comb_delta;
- 	      if (!colouring = true) then (
-		if !minimise then 
-		  add_comb_states minimised_delta
-		else
-		  add_comb_states comb_delta;
-		show_comb_states (remove_doubles !comb_states)
-	      );
+ 		min_prod := Minimise.minimise !pruned_s_prod !alphabet;
+	      show_prod !min_prod;
+	      (* Enable state-colouring if -c switch was set. *)
+ 	      if !colouring then
+ 		begin
+		  add_comb_states !min_prod;
+		  show_comb_states (remove_doubles !comb_states)
+		end;
 	      print_endline ("}")
       | _ -> show_error ("Incorrect number of arguments.\n")
   with Getopt.Error (error) -> ignore (Config.anon_args program_name error)
-    

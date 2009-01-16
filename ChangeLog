@@ -1,4 +1,10 @@
-Wed Jan 14 10:46:23 EST 2009
+Fri Jan 16 12:52:48 EST 2009  <baueran@gmail.com>
+
+- src/*.ml: rewrote almost every function slightly to improve performance
+            (too many little changes to remember or mention - sorry!)
+- src/Makefile: call ocamlopt instead of ocamlc
+
+Wed Jan 14 10:46:23 EST 2009  <baueran@gmail.com>
 
 - src/mutils.ml:remove_doubles: change structure of recursion
 - src/nevertofsm.ml:unfold_*: change structure of recursion
