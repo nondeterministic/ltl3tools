@@ -46,10 +46,12 @@ $NEVERTOFSM < NPhi.never > NPhi.txt
 
 $FSMTOOLS/fsmcompile -i actions.syms Phi.txt |\
 $FSMTOOLS/fsmdeterminize |\
+$FSMTOOLS/fsmminimize |\
 $FSMTOOLS/fsmdraw -i actions.syms > DPhi.dot
 
 $FSMTOOLS/fsmcompile -i actions.syms NPhi.txt |\
 $FSMTOOLS/fsmdeterminize |\
+$FSMTOOLS/fsmminimize |\
 $FSMTOOLS/fsmdraw -i actions.syms > DNPhi.dot
 
 $FSMCROSSPROD -m -c -f DPhi.dot -f DNPhi.dot
