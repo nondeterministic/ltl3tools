@@ -59,4 +59,4 @@ doc:
 clean:
 	rm -rf nevertofsm nevertosymbols fsmcrossprod extractalphabet dot2fsm
 	rm -rf dist neverl.ml neverp.ml
-	rm -rf a.out *.mli *.cmi *.cmx *.cmo *.aux *.dvi *.log *.pdf
+	rm -rf a.out *.o *.mli *.cmi *.cmx *.cmo *.aux *.dvi *.log *.pdf
