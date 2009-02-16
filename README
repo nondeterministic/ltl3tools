@@ -2,33 +2,38 @@ LTL3 tools README
 -=-=-=-=-=-=-=-=-
 
 What you need to properly use the LTL3 tools:
+---------------------------------------------
 
   1. AT&T's fsmlibrary: http://www.research.att.com/~fsmtools/fsm/
 
   2. LTL2BA: http://www.lsv.ens-cachan.fr/~gastin/ltl2ba/
 
-  3. Optional: AT&T's Graphviz, which includes the programs dot, dotty, etc.
-     Note that most modern Linux systems have these preinstalled.
+  3. Optional: AT&T's Graphviz, which includes the programs dot, dotty,
+     etc.  Note that most modern Linux systems have these preinstalled.
 
-How to run ltl2mon:
+How to run ltl2mon / the LTL3 tools:
+------------------------------------
 
-  1. Change into the directory where you extracted the package.
+  1. Change into the directory where you extracted the package
 
   2. Check the settings inside ltl2mon
+     (ltl2mon is the main entry point to the LTL3 tools)
 
   3. Run, for example, "./ltl2mon "(! a) U b" | dot -Tps > graph.ps"
 
-How to compile ltl2mon:
+How to compile the LTL3 tools:
+------------------------------
 
-If you are on i686 Linux, you do not have to compile the LTL3 tools
-as there are some statically linked binaries in the bin/ directory.
-Otherwise, follow these steps to compile the LTL3 tools:
+If you are on i686 GNU/Linux, you do not have to compile the LTL3
+tools as there are some statically linked binaries in the bin/
+directory.  Otherwise, follow these steps to compile the LTL3 tools:
 
-  1. (as above)
+  1. Change into the directory where you extracted the package
   
   2. Run "make install"
 
-  Notice, ltl2mon is written in Ocaml.  So you need an Ocaml compiler, etc.
+  Notice, ltl2mon is written in Ocaml.  So, you will need an Ocaml
+  tool chain.
 
 For further information read the files AUTHORS and COPYRIGHT, or visit
 http://ltl3tools.sf.net/.

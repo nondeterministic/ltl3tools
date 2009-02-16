@@ -56,5 +56,5 @@ $FSMTOOLS/fsmdraw -i actions.syms > DNPhi.dot
 
 $FSMCROSSPROD -m -c -f DPhi.dot -f DNPhi.dot
 rm Phi.txt NPhi.txt actions.syms DPhi.dot DNPhi.dot Phi.never NPhi.never
-#
+# 
 # ##############################################################################
