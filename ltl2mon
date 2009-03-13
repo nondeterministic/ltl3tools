@@ -13,8 +13,9 @@
 # Alternatively, just change into the directory of the package.
 export PACKAGE="."
 
+export EXTRACT=$PACKAGE"/bin/extractalphabet"
 export FSMCROSSPROD=$PACKAGE"/bin/fsmcrossprod"
-export NEVERTOSYM=$PACKAGE"/bin/nevertosymbols"
+export FORMTOSYM=$PACKAGE"/bin/formulatosymbols"
 export NEVERTOFSM=$PACKAGE"/bin/nevertofsm"
 
 export FSMTOOLS=$PACKAGE"/third-party"
@@ -35,14 +36,15 @@ fi
 # The sed-stuff, here and in the following, circumvents weird ltl2ba behaviour.
 export PHI=$1
 export NPHI=`echo ! \( $PHI \)`
+export ALPH=$($EXTRACT "$1")
 
 $LTLTOBA -f "$PHI" > Phi.never
-$NEVERTOFSM < Phi.never > Phi.txt
-
-$NEVERTOSYM < Phi.never > actions.syms 
+$NEVERTOFSM -a "$ALPH" < Phi.never > Phi.txt
 
 $LTLTOBA -f "$NPHI" > NPhi.never
-$NEVERTOFSM < NPhi.never > NPhi.txt
+$NEVERTOFSM -a "$ALPH" < NPhi.never > NPhi.txt
+
+$FORMTOSYM "$PHI" > actions.syms
 
 $FSMTOOLS/fsmcompile -i actions.syms Phi.txt |\
 $FSMTOOLS/fsmdeterminize |\
@@ -54,7 +56,7 @@ $FSMTOOLS/fsmdeterminize |\
 $FSMTOOLS/fsmminimize |\
 $FSMTOOLS/fsmdraw -i actions.syms > DNPhi.dot
 
-$FSMCROSSPROD -m -c -f DPhi.dot -f DNPhi.dot
+$FSMCROSSPROD -m -c -a "$ALPH" -f DPhi.dot -f DNPhi.dot
 rm Phi.txt NPhi.txt actions.syms DPhi.dot DNPhi.dot Phi.never NPhi.never
 # 
 # ##############################################################################

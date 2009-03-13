@@ -1,4 +1,4 @@
-VERSION=0.0.6
+VERSION=0.0.7
 
 all:
 	cd src; make all
@@ -21,11 +21,11 @@ install:
 	cp -f src/extractalphabet bin/.
 	cp -f src/fsmcrossprod bin/.
 	cp -f src/nevertofsm bin/.
-	cp -f src/nevertosymbols bin/.
+	cp -f src/formulatosymbols bin/.
 
 clean:
 	cd src; make clean
 	rm -f ./bin/extractalphabet
 	rm -f ./bin/fsmcrossprod
 	rm -f ./bin/nevertofsm
-	rm -f ./bin/nevertosymbols
+	rm -f ./bin/formulatosymbols

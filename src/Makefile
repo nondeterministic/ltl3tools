@@ -3,20 +3,23 @@ SOURCES = 	config.ml \
 		mutils.ml \
 		putils.ml \
 		gutils.ml \
+		alphabet.ml \
 		minimise.ml \
 		dot.ml    \
 		getopt.ml
 
-OBJECTS = 	config.cmx \
+OBJECTS = 	str.cmxa \
+		config.cmx \
 		declarations.cmx \
 		mutils.cmx \
 		putils.cmx \
 		gutils.cmx \
+		alphabet.cmx \
 		minimise.cmx \
 		dot.cmx    \
 		getopt.cmx
 
-all: nevertofsm nevertosymbols extractalphabet fsmcrossprod
+all: nevertofsm formulatosymbols extractalphabet fsmcrossprod
 
 neverp.cmx:
 	ocamlyacc neverp.mly
@@ -32,22 +35,21 @@ nevertofsm: neverp.cmx
 	       nevertofsm.cmx
 
 extractalphabet: neverp.cmx
-	ocamlopt -c $(SOURCES) extractalphabet.ml
+	ocamlopt -c $(SOURCES) str.cmxa extractalphabet.ml
 	ocamlopt -o extractalphabet    \
-	        $(OBJECTS)            \
+		$(OBJECTS)             \
 		neverl.cmx neverp.cmx \
 		extractalphabet.cmx
 
-nevertosymbols: neverp.cmx
-	ocamlopt -c $(SOURCES) nevertosymbols.ml
-	ocamlopt -o nevertosymbols      \
-	        $(OBJECTS)            \
-		neverl.cmx neverp.cmx \
-		nevertosymbols.cmx
+formulatosymbols: neverp.cmx
+	ocamlopt -c $(SOURCES) formulatosymbols.ml
+	ocamlopt -o formulatosymbols      \
+	        $(OBJECTS)           \
+		formulatosymbols.cmx
 
 fsmcrossprod:
 	ocamlopt -I +camlp4 -pp camlp4of.opt \
-		$(SOURCES)            \
+		str.cmxa $(SOURCES) \
 		fsmcrossprod.ml       \
 		-o fsmcrossprod
 
@@ -57,6 +59,6 @@ doc:
 	dvipdf doc.dvi
 
 clean:
-	rm -rf nevertofsm nevertosymbols fsmcrossprod extractalphabet dot2fsm
+	rm -rf nevertofsm formulatosymbols fsmcrossprod extractalphabet dot2fsm
 	rm -rf dist neverl.ml neverp.ml
 	rm -rf a.out *.o *.mli *.cmi *.cmx *.cmo *.aux *.dvi *.log *.pdf

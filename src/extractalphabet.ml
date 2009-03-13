@@ -17,72 +17,30 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *)
 
-open Config
-open Getopt
-open Declarations
-open String
+open Printf
 open Putils
 open Mutils
-open Printf
+open Alphabet
 
-let program_name = "extractalphabet"
-
-let rec show_alpha a =
-  match a with
-      [] -> Printf.printf ("");
+let rec print_alpha s =
+  match s with
+      [] -> print_endline ("")
+    | h::e::t -> 
+	Printf.printf ("%s,") h; print_alpha (e::t)
     | h::t -> 
-	Printf.printf("%s") h;
-	if (List.length t >= 1) then
-	  Printf.printf(", ");
-	show_alpha t
+	Printf.printf ("%s") h; print_alpha t
 
-let main () =
-  try
-    let lexbuf = Lexing.from_channel stdin in
-      while true do
-	Neverp.input Neverl.token lexbuf
-      done	   
-  with End_of_file -> 
-    let list_of_actions = powerset ( remove_doubles (
-				       remove_universal_transitions (
-					 extract_labels 
-					   !Declarations.transitions) ) ) in
-    let alpha = actions_to_alphabet list_of_actions in
-      show_alpha alpha
+(* Gets a string from the command line, which is an LTL formula in
+   LTL2BA format and returns the alphabet of the automata. *)
 
-let show_help = 
-  Some (
-    fun () ->
-      Printf.printf 
-	("%s extracts an NBA's alphabet from a SPIN never-claim.")
-	program_name;
-      Printf.printf
-	("\n\n");
-      Printf.printf
-	("Usage: %s [OPTION] < FILE\n\n") Sys.argv.(0);
-      Printf.printf
-	("Options:\n");
-      Printf.printf
-	(" -h, --help      Display this help information\n");
-      Printf.printf
-	(" -v, --version   Display version information\n\n");
-      Printf.printf
-	("Report bugs to <baueran@gmail.com>.\n");
-      exit 0
-  )
-    
-let specs =
-[
-  ('v', "version", (Config.show_version program_name), None);
-  ('h', "help", show_help, None);
-  ('?', "", show_help, None)
-]
-
-let _ = 
-  try
-    Getopt.parse_cmdline specs print_endline;
-    Declarations.transitions := [];
-    Declarations.states := [];
-    Declarations.alphabet := [];
-    Printexc.print main ()
-  with Getopt.Error (error) -> ignore (Config.anon_args program_name error)
+let _ =
+  let formula = Sys.argv.(1) in
+  let alphabetlist = Alphabet.alphalist (Alphabet.extract_alpha formula) in
+  let alphabet = 
+    Putils.actions_to_alphabet (
+      Mutils.powerset (
+	Mutils.sort (
+	  Mutils.remove_doubles (alphabetlist))))
+  in
+    print_alpha alphabet
+      
