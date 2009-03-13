@@ -126,18 +126,18 @@ let rec show_comb_states states =
     | (q1,q2)::t -> 
 	if ((int_of_string q1) = -1) then
 	  Printf.printf
-	    ("\"(%s, %s)\" [label=\"(%s, %s)/BOT\"]\n") 
-(* 	    ("\"(%s, %s)\" [label=\"(%s, %s)\", style=filled, color=red]\n")  *)
+(* 	    ("\"(%s, %s)\" [label=\"(%s, %s)/BOT\"]\n")  *)
+	    ("\"(%s, %s)\" [label=\"(%s, %s)\", style=filled, color=red]\n")
 	    q1 q2 q1 q2
 	else if ((int_of_string q2) = -1) then
 	  Printf.printf
-	    ("\"(%s, %s)\" [label=\"(%s, %s)/TOP\"]\n")
-(* 	    ("\"(%s, %s)\" [label=\"(%s, %s)\", style=filled, color=green]\n") *)
+(* 	    ("\"(%s, %s)\" [label=\"(%s, %s)/TOP\"]\n") *)
+	    ("\"(%s, %s)\" [label=\"(%s, %s)\", style=filled, color=green]\n")
 	    q1 q2 q1 q2
 	else
 	  Printf.printf
-	    ("\"(%s, %s)\" [label=\"(%s, %s)/?\"]\n")
-(* 	    ("\"(%s, %s)\" [label=\"(%s, %s)\", style=filled, color=yellow]\n") *)
+(* 	    ("\"(%s, %s)\" [label=\"(%s, %s)/?\"]\n") *)
+	    ("\"(%s, %s)\" [label=\"(%s, %s)\", style=filled, color=yellow]\n")
 	    q1 q2 q1 q2;
 	show_comb_states t
 

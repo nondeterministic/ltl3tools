@@ -24,10 +24,11 @@ open Putils
 open Mutils
 open Str
 
-let islowercase c =
+let isloweroralpha c =
   List.mem c ['a';'b';'c';'d';'e';'f';'g';'h';'i';'j';
 		 'k';'l';'m';'n';'o';'p';'q';'r';'s';'t';
-		 'u';'v';'w';'x';'y';'z']
+		 'u';'v';'w';'x';'y';'z';'0';'1';'2';'3';
+		 '4';'5';'6';'7';'8';'9']
 
 (* extract all the lowercase characters from a string and replace
    everything else with a comma *)
@@ -40,7 +41,7 @@ let rec extr s =
 	try
 	  for i = 0 to (String.length s - 1) do
 	    let c = String.get s i in
-	      if islowercase c then
+	      if isloweroralpha c then
 		word := !word^(String.make 1 c)
 	      else
 		word := !word^(String.make 1 ',')
