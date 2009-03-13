@@ -26,6 +26,8 @@ open Mutils
 
 let program_name = "nevertofsm"
 
+let extalpha = ref []
+
 (* Gets a string representing a numberical value, possibly with a trailing 0, *)
 (* and returns that value as a string without trailing 0. *)
 
@@ -102,14 +104,19 @@ let main () =
 	Neverp.input Neverl.token lexbuf
       done	   
   with End_of_file -> 
-    Declarations.alphabet := 
-      actions_to_alphabet (
-	powerset ( 
-	  sort (
-	    remove_universal_transitions (
-	      remove_doubles (
-		extract_labels
-		  !Declarations.transitions) ) ) ) );
+    if (List.length !extalpha > 0) then
+      Declarations.alphabet := 
+	Str.split (Str.regexp_string ",") 
+	  (List.hd !extalpha)
+    else
+      Declarations.alphabet := 
+	actions_to_alphabet (
+	  powerset ( 
+	    sort (
+	      remove_universal_transitions (
+		remove_doubles (
+		  extract_labels
+		    !Declarations.transitions) ) ) ) );
     unprocessed_trans := 
       unfold_trans
 	(unfold_sigma
@@ -133,9 +140,11 @@ let show_help =
       Printf.printf
 	("Options:\n");
       Printf.printf
-	(" -h, --help      Display this help information\n");
+	(" -a, --alph \"ALPHABET\"   Define alphabet\n");
       Printf.printf
-	(" -v, --version   Display version information\n\n");
+	(" -h, --help              Display this help information\n");
+      Printf.printf
+	(" -v, --version           Display version information\n\n");
       Printf.printf
 	("Report bugs to <baueran@gmail.com>.\n");
       exit 0
@@ -143,6 +152,7 @@ let show_help =
     
 let specs =
 [
+  ('a', "alpha", None, (Getopt.append extalpha));
   ('v', "version", (Config.show_version program_name), None);
   ('h', "help", show_help, None);
   ('?', "", show_help, None)

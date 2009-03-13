@@ -22,6 +22,7 @@ open Config
 open Getopt
 open Printf
 open String
+open Str
 open Putils
 open Mutils
 open Gutils
@@ -31,6 +32,8 @@ open Dot
 (*s The program's name. *)
 
 let program_name = "fsmcrossprod"
+
+let extalpha = ref []
 
 (*s A list of strings which contains the file names of the input
   files. *)
@@ -123,15 +126,18 @@ let rec show_comb_states states =
     | (q1,q2)::t -> 
 	if ((int_of_string q1) = -1) then
 	  Printf.printf
-	    ("\"(%s, %s)\" [label=\"(%s, %s)\", style=filled, color=red]\n") 
+	    ("\"(%s, %s)\" [label=\"(%s, %s)/BOT\"]\n") 
+(* 	    ("\"(%s, %s)\" [label=\"(%s, %s)\", style=filled, color=red]\n")  *)
 	    q1 q2 q1 q2
 	else if ((int_of_string q2) = -1) then
 	  Printf.printf
-	    ("\"(%s, %s)\" [label=\"(%s, %s)\", style=filled, color=green]\n")
+	    ("\"(%s, %s)\" [label=\"(%s, %s)/TOP\"]\n")
+(* 	    ("\"(%s, %s)\" [label=\"(%s, %s)\", style=filled, color=green]\n") *)
 	    q1 q2 q1 q2
 	else
 	  Printf.printf
-	    ("\"(%s, %s)\" [label=\"(%s, %s)\", style=filled, color=yellow]\n")
+	    ("\"(%s, %s)\" [label=\"(%s, %s)/?\"]\n")
+(* 	    ("\"(%s, %s)\" [label=\"(%s, %s)\", style=filled, color=yellow]\n") *)
 	    q1 q2 q1 q2;
 	show_comb_states t
 
@@ -166,15 +172,17 @@ let show_help =
       Printf.printf
         ("Options:\n");
       Printf.printf
-	(" -f, --file FILE   Define FSM input file\n");
+	(" -f, --file FILE         Define FSM input file\n");
       Printf.printf
-	(" -c, --colour      Turn on colouring\n");
+	(" -a, --alph \"ALPHABET\"   Define alphabet\n");
       Printf.printf
-        (" -h, --help        Display this help information\n");
+	(" -c, --colour            Turn on colouring\n");
       Printf.printf
-	(" -m, --minimise    Minimise monitor\n");
+        (" -h, --help              Display this help information\n");
       Printf.printf
-        (" -v, --version     Display version information\n\n");
+	(" -m, --minimise          Minimise monitor\n");
+      Printf.printf
+        (" -v, --version           Display version information\n\n");
       Printf.printf
         ("Report bugs to <baueran@gmail.com>.\n");
       exit 0
@@ -185,6 +193,7 @@ let show_help =
 
 let specs =
 [
+  ('a', "alpha", None, (Getopt.append extalpha));
   ('f', "file", None, (Getopt.append ifiles));
   ('c', "colour", (Getopt.set colouring true), None);
   ('v', "version", (Config.show_version program_name), None);
@@ -212,12 +221,17 @@ let _ =
 	  let fsm1 = (read_file h) in
 	  let trans1 = ref (Dot.parse fsm1) in
 	  let states1 = ref (Gutils.get_states !trans1) in
-	  let alphabet = 
-	    ref (actions_to_alphabet (
-		   powerset (
-		     sort (
-		       remove_doubles (
-			 extract_labels !trans1))))) in
+	  let chose_alpha =
+	    if (List.length !extalpha > 0) then
+	      Str.split (Str.regexp_string ",") (List.hd !extalpha)
+	    else
+	      actions_to_alphabet (
+		powerset (
+		  sort (
+		    remove_doubles (
+		      extract_labels !trans1))))
+	  in
+	  let alphabet = ref chose_alpha in
 	  let fsm2 = (read_file t) in
 	  let trans2 = ref (Dot.parse fsm2) in
 	  let states2 = ref (Gutils.get_states !trans2) in

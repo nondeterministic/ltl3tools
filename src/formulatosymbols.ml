@@ -18,27 +18,30 @@
 *)
 
 open Printf
+open Putils
+open Mutils
+open Alphabet
 
-let version = "0.0.7"
-let copyright = "Copyright (c) 2008-2009 by Andreas Bauer <baueran@gmail.com>"
+let rec print_s s c =
+  match s with
+      [] -> Printf.printf ("")
+    | h::t -> 
+	Printf.printf ("%s %i\n") h c; 
+	print_s t (c+1)
 
-let anon_args program_name option =
-  Printf.printf ("%s: %s\n") program_name option;
-  Printf.printf ("Try %s --help for more information.\n") Sys.argv.(0);
-  exit 0
+let print_symbols s = print_s s 1
 
-let show_version program_name =
-  Some (
-    fun () ->
-      Printf.printf
-	("%s %s\n\n") program_name version;
-      Printf.printf
-	("%s\n\n") copyright;
-      print_endline 
-	("This is free software; see the source for copying conditions.");
-      print_endline 
-	("There is NO warranty; not even for MERCHANTABILITY or FITNESS");
-      print_endline 
-	("FOR A PARTICULAR PURPOSE.");
-      exit 0
-  )
+(* Gets a string from the command line, which is an LTL formula in
+   LTL2BA format and returns the symbols in the format of the
+   fsmlibrary. *)
+
+let _ =
+  let formula = Sys.argv.(1) in
+  let alphabetlist = Alphabet.alphalist (Alphabet.extract_alpha formula) in
+  let alphabet = 
+    Putils.actions_to_alphabet (
+      Mutils.powerset (
+	Mutils.sort (
+	  Mutils.remove_doubles (alphabetlist))))
+  in
+    print_symbols alphabet
