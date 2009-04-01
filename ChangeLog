@@ -1,3 +1,11 @@
+Thu Apr  2 10:29:57 EST 2009  <baueran@gmail.com>
+
+- src/nevertosymbols.ml: remove
+- src/fsmcrossprod.ml, src/alphabet.ml, src/extractalphabet.ml:
+  added additional output explaining arguments,
+  added comments in the code
+- NEWS, ltl2ba: update documentation
+
 Sat Mar 14 10:53:31 EST 2009  <baueran@gmail.com>
 
 - src/alphabet.ml, src/formulatosymbols.ml: new
