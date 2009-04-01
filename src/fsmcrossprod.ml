@@ -223,12 +223,18 @@ let _ =
 	      Str.split (Str.regexp_string ",") (List.hd !extalpha)
 	    else
 	      begin
-		show_error ("You must supply an alphabet. For example, if your");
-		show_error ("formula is [] a || b, then you would have to supply");
-		show_error ("-a \"(<empty>),(b),(a),(a&&b)\" to fsmcrossprod.");
-		show_error ("Alternatively, consider show_error piping the output");
-		show_error ("of extractalphabet is input to the -a switch. The");
-		show_error ("job of extractalphabet is to make your life easier.");
+		show_error
+		  ("You must supply an alphabet. For example, if your");
+		show_error
+		  ("formula is [] a || b, then you would have to supply");
+		show_error
+		  ("-a \"(<empty>),(b),(a),(a&&b)\" to fsmcrossprod.");
+		show_error
+		  ("Alternatively, consider show_error piping the output");
+		show_error
+		  ("of extractalphabet is input to the -a switch. The");
+		show_error
+		  ("job of extractalphabet is to make your life easier.");
 		exit 0;
 	      end;
 	  in
