@@ -31,11 +31,13 @@ let rec print_alpha s =
 	Printf.printf ("%s") h; print_alpha t
 
 (* Gets a string from the command line, which is an LTL formula in
-   LTL2BA format and returns the alphabet of the automata. *)
+   LTL2BA format and returns the alphabet of the corresponding Buchi
+   automaton.  That is, if the LTL formula uses the propositions "a"
+   and "b", then a string "(<empty>),(b),(a),(a&&b)" is returned.  *)
 
 let _ =
   let formula = Sys.argv.(1) in
-  let alphabetlist = Alphabet.alphalist (Alphabet.extract_alpha formula) in
+  let alphabetlist = Alphabet.alphalist (Alphabet.extract_props formula) in
   let alphabet = 
     Putils.actions_to_alphabet (
       Mutils.powerset (
@@ -43,4 +45,3 @@ let _ =
 	  Mutils.remove_doubles (alphabetlist))))
   in
     print_alpha alphabet
-      
