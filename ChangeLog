@@ -1,6 +1,10 @@
 Thu Apr  2 10:29:57 EST 2009  <baueran@gmail.com>
 
+- src/alphabet.ml: new file
+- src/extractalphabet.ml: new file
 - src/nevertosymbols.ml: remove
+- src/fsmcrossprod.ml, src/nevertofsm.ml: use alphabet.ml, added -a
+  command line option for accepting external alphabet
 - src/fsmcrossprod.ml, src/alphabet.ml, src/extractalphabet.ml:
   added additional output explaining arguments,
   added comments in the code
