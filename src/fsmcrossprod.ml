@@ -126,17 +126,14 @@ let rec show_comb_states states =
     | (q1,q2)::t -> 
 	if ((int_of_string q1) = -1) then
 	  Printf.printf
-(* 	    ("\"(%s, %s)\" [label=\"(%s, %s)/BOT\"]\n")  *)
 	    ("\"(%s, %s)\" [label=\"(%s, %s)\", style=filled, color=red]\n")
 	    q1 q2 q1 q2
 	else if ((int_of_string q2) = -1) then
 	  Printf.printf
-(* 	    ("\"(%s, %s)\" [label=\"(%s, %s)/TOP\"]\n") *)
 	    ("\"(%s, %s)\" [label=\"(%s, %s)\", style=filled, color=green]\n")
 	    q1 q2 q1 q2
 	else
 	  Printf.printf
-(* 	    ("\"(%s, %s)\" [label=\"(%s, %s)/?\"]\n") *)
 	    ("\"(%s, %s)\" [label=\"(%s, %s)\", style=filled, color=yellow]\n")
 	    q1 q2 q1 q2;
 	show_comb_states t
@@ -174,7 +171,9 @@ let show_help =
       Printf.printf
 	(" -f, --file FILE         Define FSM input file\n");
       Printf.printf
-	(" -a, --alph \"ALPHABET\"   Define alphabet\n");
+	(" -a, --alph \"ALPHABET\"   Define alphabet, e.g, \"(<empty>),(b),(a),(a&&b)\",\n");
+      Printf.printf
+	("                         or use output of extractalphabet.\n");
       Printf.printf
 	(" -c, --colour            Turn on colouring\n");
       Printf.printf
@@ -205,9 +204,7 @@ let specs =
 (*s This function is called when an exception is thrown during the
   parsing of command line parameters. *)
 
-let show_error msg =
-  Printf.printf ("%s: %s\n") program_name msg;
-  exit 0
+let show_error msg = Printf.printf ("%s: %s\n") program_name msg
 
 (*s The main entry for fsmcrossprod.  Handles processing of command
 line parameters via Alain Frisch's getopt, calls processing functions
@@ -225,11 +222,15 @@ let _ =
 	    if (List.length !extalpha > 0) then
 	      Str.split (Str.regexp_string ",") (List.hd !extalpha)
 	    else
-	      actions_to_alphabet (
-		powerset (
-		  sort (
-		    remove_doubles (
-		      extract_labels !trans1))))
+	      begin
+		show_error ("You must supply an alphabet. For example, if your");
+		show_error ("formula is [] a || b, then you would have to supply");
+		show_error ("-a \"(<empty>),(b),(a),(a&&b)\" to fsmcrossprod.");
+		show_error ("Alternatively, consider show_error piping the output");
+		show_error ("of extractalphabet is input to the -a switch. The");
+		show_error ("job of extractalphabet is to make your life easier.");
+		exit 0;
+	      end;
 	  in
 	  let alphabet = ref chose_alpha in
 	  let fsm2 = (read_file t) in
@@ -252,5 +253,7 @@ let _ =
 		  show_comb_states (remove_doubles !comb_states)
 		end;
 	      print_endline ("}")
-      | _ -> show_error ("Incorrect number of arguments.\n")
+      | _ -> 
+	  show_error ("Incorrect number of arguments. Try -h for help.");
+	  exit 0
   with Getopt.Error (error) -> ignore (Config.anon_args program_name error)

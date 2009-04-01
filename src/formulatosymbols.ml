@@ -37,7 +37,7 @@ let print_symbols s = print_s s 1
 
 let _ =
   let formula = Sys.argv.(1) in
-  let alphabetlist = Alphabet.alphalist (Alphabet.extract_alpha formula) in
+  let alphabetlist = Alphabet.alphalist (Alphabet.extract_props formula) in
   let alphabet = 
     Putils.actions_to_alphabet (
       Mutils.powerset (

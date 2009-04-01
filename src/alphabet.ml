@@ -17,7 +17,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *)
 
-(* when interactive: #load "str.cma";; *)
+(* When in interactive mode, do: #load "str.cma";; *)
 
 open String
 open Putils
@@ -30,8 +30,8 @@ let isloweroralpha c =
 		 'u';'v';'w';'x';'y';'z';'0';'1';'2';'3';
 		 '4';'5';'6';'7';'8';'9';'_']
 
-(* extract all the lowercase characters from a string and replace
-   everything else with a comma *)
+(* Extract all the lowercase characters from a string and replace
+   everything else with a comma, including white spaces. *)
 
 let rec extr s =
   let word = ref "" in
@@ -51,7 +51,7 @@ let rec extr s =
 	  !word;
       end
 
-(* remove consecutive commas in a string *)
+(* Remove consecutive commas in a string. *)
 
 let rm_cons s =
   let word = ref "" in
@@ -70,7 +70,7 @@ let rm_cons s =
       !word
     with Exit -> !word
 
-(* remove trailing and initial commas in a string *)
+(* Remove only the trailing and initial commas in a string. *)
 
 let rec rm_ie s =
   if String.get s 0 = ',' then
@@ -81,12 +81,13 @@ let rec rm_ie s =
    else
      s
 
-(* a wrapper around the above functions *)
+(* A wrapper around the above functions. Say, if s is "[] a || b",
+   then "a,b" is returned. *)
 
-let extract_alpha s =
+let extract_props s =
   rm_ie (rm_cons (extr s))
-      
-(* make list of strings contained in s *)
+    
+(* Make a list of substrings contained in s. *)
 
 let rec alphalist s =
   Str.split (Str.regexp_string ",") s
