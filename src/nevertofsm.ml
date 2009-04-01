@@ -142,6 +142,8 @@ let show_help =
       Printf.printf
 	(" -a, --alph \"ALPHABET\"   Define alphabet\n");
       Printf.printf
+	("                         or use output of extractalphabet.\n");
+      Printf.printf
 	(" -h, --help              Display this help information\n");
       Printf.printf
 	(" -v, --version           Display version information\n\n");
@@ -158,9 +160,32 @@ let specs =
   ('?', "", show_help, None)
 ]
 
+(*s This function is called when an exception is thrown during the
+  parsing of command line parameters. *)
+
+let show_error msg = Printf.printf ("%s: %s\n") program_name msg
+
 let _ = 
   try
     Getopt.parse_cmdline specs print_endline;
+    if (List.length !extalpha <= 0) then
+      begin
+	show_error
+	  ("You must supply an alphabet. For example, if your");
+	show_error
+	  ("formula is [] a || b, then you would have to supply");
+	show_error
+	  ("-a \"(<empty>),(b),(a),(a&&b)\" to nevertofsm.");
+	show_error
+	  ("Alternatively, consider show_error piping the output");
+	show_error
+	  ("of extractalphabet is input to the -a switch. The");
+	show_error
+	  ("job of extractalphabet is to make your life easier.");
+	show_error
+	  ("Try -h for getting a list of options.");
+	exit 0;
+      end;
     Declarations.transitions := [];
     Declarations.states := [];
     Declarations.alphabet := [];

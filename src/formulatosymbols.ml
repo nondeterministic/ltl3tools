@@ -33,7 +33,10 @@ let print_symbols s = print_s s 1
 
 (* Gets a string from the command line, which is an LTL formula in
    LTL2BA format and returns the symbols in the format of the
-   fsmlibrary. *)
+   fsmlibrary.  
+
+   The symbols, essentially, correspond to the input alphabet of the
+   Buchi automata.  See also extractalphabet's comments. *)
 
 let _ =
   let formula = Sys.argv.(1) in
