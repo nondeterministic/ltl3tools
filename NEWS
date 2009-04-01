@@ -1,7 +1,7 @@
 LTL3 Tools NEWS
 -=-=-=-=-=-=-=-
 
-[under development]                     LTL3 tools 0.0.7
+Wed Apr  1 21:20:22 EST 2009            LTL3 tools 0.0.7
 
 - Added program formulatosymbols which takes a formula and returns a list
   of symbols as required by AT&T's fsmlibrary
