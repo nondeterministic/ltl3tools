@@ -4,34 +4,28 @@
 # Copyright (c) 2008-2009 Andreas Bauer <baueran@gmail.com>
 # ##############################################################################
 
-# ##############################################################################
-# Settings, edit as you please.
-# These are basically paths to the executable files which make up the
-# functionality of ltl2mon.
-#
-# This is where your ltl2mon package is extracted to.
-# Alternatively, just change into the directory of the package.
-export PACKAGE="."
+if [ ! "$1" ]; then
+    echo "Error: No arguments given."
+    echo "The correct syntax is: ltl2mon \"<formula>\" [--prefix <directory>]"
+    exit 0
+fi
+
+# Either the script is invoked from the directory where it lives in,
+# or if invoked from another directory, then --prefix <DIR> can be
+# used to say where ltl2mon lives in.
+
+if [ "$2" = "--prefix" ]; then
+    export PACKAGE=$3
+else
+    export PACKAGE=.
+fi
 
 export EXTRACT=$PACKAGE"/bin/extractalphabet"
 export FSMCROSSPROD=$PACKAGE"/bin/fsmcrossprod"
 export FORMTOSYM=$PACKAGE"/bin/formulatosymbols"
 export NEVERTOFSM=$PACKAGE"/bin/nevertofsm"
-
 export FSMTOOLS=$PACKAGE"/third-party"
 export LTLTOBA=$PACKAGE"/third-party/ltl2ba"
-#
-# ##############################################################################
-
-# ##############################################################################
-# Do NOT edit beyond this point, unless you know what you are doing
-# ##############################################################################
-#
-if [ ! "$1" ]; then
-    echo "Error: No arguments given."
-    echo "The correct syntax is: ltl2mon \"<formula>\""
-    exit 0
-fi
 
 export PHI=$1
 export NPHI=`echo ! \( $PHI \)`
@@ -57,5 +51,4 @@ $FSMTOOLS/fsmdraw -i actions.syms > DNPhi.dot
 
 $FSMCROSSPROD -m -c -a "$ALPH" -f DPhi.dot -f DNPhi.dot
 rm Phi.txt NPhi.txt actions.syms DPhi.dot DNPhi.dot Phi.never NPhi.never
-# 
-# ##############################################################################
+
