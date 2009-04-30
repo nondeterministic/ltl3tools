@@ -1,0 +1,514 @@
+# ##########################################################################
+# The specifications are taken from
+#
+# http://patterns.projects.cis.ksu.edu/documentation/specifications/ALL.raw.
+#
+# Typed in in their present form by Andreas Bauer (2009-04-30)
+#
+# Lines starting with '-' are those that can be parsed by ltl3tools.
+# Lines starting with '@' are not processed, as they take about 20 min
+# to process on my dual core machine. 
+#
+# Formulas marked as ??? are not processed at all due to other problems, not
+# specified above.
+#
+# ##########################################################################
+
+PATTERN: Constrained Response-chain 2-1
+LTL: [](call_Enqueue(d1) & (!return_Dequeue(d1) U call_Top_Down) ->
+        <>(call_Top_Down & <>call_P(d1,*)))
+- [](ced1 && ((! rd1) U ctd) -> <>(ctd && <>cp1))
+
+PATTERN: Constrained 3-2 Response Chain
+LTL: [](call_Enqueue(d1) & (!return_Dequeue(d1) U call_Bottom_Up) ->
+        <>(call_Bottom_Up & <>call_P(d1,*)))
+- [](ce && ((! rd) U cbu) -> <>(cbu && <>cp))
+
+PATTERN: Constrained 3-2 Response Chain
+LTL: []((call_Enqueue(d1) & 
+         (!return_Dequeue(d1) U (call_Enqueue(d2) & 
+          (!return_Dequeue(d1) & !return_Dequeue(d2) U call_Top_Down)))) -> 
+        <>(call_Top_Down & <>(call_P(d1) & <>call_P(d2))))
+@ [](ced1 && ((! rdd1) U (ced2 && ((! rdd1) && (! rdd2) U ctd))) -> <>(ctd && <>(cpd1 && <>cpd2)))
+
+PATTERN: Constrained 2-1 Response Chain
+LTL: [](call_Enqueue & (!return_Dequeue U call_Empty) ->
+        <>(call_Empty & <>return_Empty(false)))
+- [](ce && ((! rd) U cem) -> <>(cem && <>re))
+
+PATTERN: Existence
+LTL: []((call_Enqueue(d1) & <>return_Empty(true)) -> 
+        (!return_Empty(true) U return_Dequeue(d1)))
+- []((ce && <>re) -> ((! re) U rd))
+
+PATTERN: 2 Bounded Existence
+LTL: []((call & <>open) ->
+        ((!atfloor & !open) U 
+         (open | ((atfloor & !open) U
+          (open | ((!atfloor & !open) U
+           (open | ((atfloor & !open) U
+            (open | (!atfloor U open))))))))))
+- []((c && <>o) -> (((! a) && (! o)) U (o || ((a && (! o)) U (o || (((! a) && (! o)) U (o || ((a && (! o)) U (o || ((! a) U o))))))))))
+
+PATTERN: Response 
+LTL:  [](OpenNetworkConnection -> [](NetworkError -> <>ErrorMessage))
+- [](onc -> [](ne -> <>em))
+
+PATTERN: Existence 
+LTL:  []((PopServerConnected & <>PlacedinMailboxes) -> 
+         (!PlacedinMailboxes U MessagesTransfered))
+- []((psc && <>pm) -> ((! pm) U mt))
+
+PATTERN: Existence 
+LTL:  <>QueuedMailSent -> (!QueuedMailSent U SMTPServerConnected)
+- <>qms -> ((! qms) U smtp)
+
+PATTERN: Existence
+LTL:  [](!MailboxSelected) | <>(MailboxSelected & <>MailboxWindowOpen))
+- []((! mbs) || <>(mbs && <>mbwo))
+
+PATTERN: Existence 
+LTL: [](!MessageReady) | <>(MessageReady & <>MessageinOutbox))
+- []((! mr) || <>(mr && <> mo))
+
+PATTERN: Existence 
+LTL: [](!MessageDragged) | <>(MessageDragged & <>MessageMoved))
+- []((! md) || <>(md && <> mm))
+
+PATTERN: Response 
+LTL: [](Error -> [](ErrorPopup -> <>ResponsetoPopup))
+- [](e -> [](ep -> <> r))
+
+PATTERN: Response 
+LTL: [](MessageTransferred -> [](PlacedinMailboxes -> <>MarkasUnread))
+- [](mt -> [](pm  -> <>m))
+
+PATTERN: Existence
+LTL: [](!POPServerMessageDelete) | 
+     <>(POPServerMessageDelete & <>PlacedinMailboxes)
+- [](! pop) || <>(pop && <> pl)
+
+PATTERN: Absence
+LTL: (<>call_Execute) -> ((!call_doWork) U call_Execute)
+- (<>ce) -> (((! cdw)) U ce)
+
+PATTERN: Absence
+LTL: []((return_Execute && (<>call_Execute)) -> 
+        ((!call_doWork) U call_Execute))
+- []((re && (<>ce)) -> (((! cd)) U ce))
+
+PATTERN: Absence
+LTL: [](call_doResults:i -> 
+        ((!call_doResults:j) U (return_doResults:i || [](!call_doResults:j))))
+- [](cdri -> (((! cdrj)) U (rdri || []((! cdrj)))))
+
+PATTERN: Absence
+LTL: []((call_doResults:i && <>return_doResults:i) -> 
+        ((!call_doResults:j) U return_doResults:i))
+- []((cdri && <>rdi) -> (((! cdrj)) U rdi))
+
+PATTERN: Response
+LTL: [](return_resultlock.wait:i -> <>call_resultlock.signal:i)
+- [](rr -> <>cr)
+
+PATTERN: Response
+LTL: [](call_doWork:i -> <>return_doWork:i) 
+- [](cdwi -> <>rdwi)
+
+PATTERN: Filter=GlobalResponse->GlobalResponse
+LTL: [](call_doResult:i -> <>return_doResult:i) ->
+     [](return_resultlock.wait:i -> <>call_resultlock.signal:i)
+- [](cdri -> <>rdri) -> [](rrli -> <>crsi)
+
+PATTERN: Absence
+LTL: [](call_Execute -> ((!return_Execute) U
+        (return_doWork(done==true):i || ... || 
+         return_doResult(done==true):i || ... || workCountEQzero ||
+         [](!return_Execute))))
+???
+
+PATTERN: Precedence
+LTL: ((! return_Execute ) U ( return_pool.Complete || [] (!return_Execute)))
+- (((! re)) U (rp || [] ((! re))))
+
+PATTERN: Precedence
+LTL: (!return_pool.Finished) U 
+     (return_doWork(done==true):i || ... || 
+      return_doResult(done==true):i || ... || [] (!return_pool.Finished))
+???
+
+PATTERN: Absence
+LTL: []!(call_Create:i || call_Destroy:i || call_Input:i || 
+         call_Execute:i || call_GetResults:i) 
+- [](! (cci || cdi || cii || cei || cgri))
+
+PATTERN: Filter=GlobalAbsence+GlobalPrecedence 
+LTL: ([]!(call_Create:i || call_Destroy:i || call_Input:i || 
+         call_Execute:i || call_GetResults:i)) -> 
+     ((!return_pool.Finished) U 
+      (return_doWork(done==true):i || ... || 
+       return_doResult(done==true):i || ... || [] (!return_pool.Finished)))
+???
+
+PATTERN: Response
+LTL: [](txB1==0 -> <>txB1==1);
+     [](rxBufferSem1==0 -> <>rxBufferSem1==1);
+     [](rxBCS1==0 -> <>rxBCS1==1);
+- [](txb10 -> <>txb11)
+
+PATTERN: Universal
+LTL: []((state0 & !state1 & !state2 & !state3) |
+        (!state0 & state1 & !state2 & !state3) |
+        (!state0 & !state1 & state2 & !state3) |
+        (!state0 & !state1 & !state2 & state3) )
+- []((s0 && (! s1) && (! s2) && (! s3)) || ((! s0) && s1 && (! s2) && (! s3)) || ((! s0) && (! s1) && s2 && (! s3)) || ((! s0) && (! s1) && (! s2) && s3))
+
+PATTERN: Absence
+LTL: []((state0 & <>state1) -> !(state2 || state3) U state1)
+     []((state3 & <>state2) -> !(state0 || state1) U state2)
+- []((s0 && <>s1) -> (! (s2 || s3)) U s1)
+
+PATTERN: Absence
+LTL: []((state1 & <>(state0 || state2)) -> !state3 U (state0 || state2))
+- []((s1 && <>(s0 || s2)) -> (! s3) U (s0 || s2))
+
+PATTERN: Absence
+LTL: <>connect -> (!(disconnect || poke || send || blockingSend || receive || blockingReceive) U connect)
+- <>c -> ((! (d || p || s || bs || r || br) U c))
+
+PATTERN: Absence
+LTL: []((connect && <>disconnect) -> !connect U disconnect)
+- []((c && <>d) -> (! c) U d)
+
+PATTERN: Absence
+LTL: []((disconnect && <>connect) ->
+        !(disconnect || poke || send || blockingSend || 
+          receive || blockingReceive) U connect)
+- []((d && <>c) -> (! (d || p || s || bs || r || br)) U c)
+
+PATTERN: Universal
+LTL: [](blockingSendBeforeSendPlace -> !Connected)
+- [](b -> (! c))
+
+PATTERN: Response
+LTL: []((register_a1_e1 && <> unregister_a1_e1) -> 
+        (after_notify_artists_e1 -> 
+         ((!(notify_artists_e1 || notify_artists_e2) && !unregister_a1_e1) U
+          notify_client_event_a1_e1)) U 
+        unregister_a1_e1)
+- []((r && <> u) -> (a -> (((! (ne || nee)) && (! u)) U nc)) U u)
+
+PATTERN: Precedence
+LTL: !(notify_client_event_a1_e1 || notify_client_event_a2_e1)  U
+     (notify_artists_e1 || 
+      []!(notify_client_event_a1_e1 || notify_client_event_a2_e1))
+- (! (na1e1 || na2e1)) U (ne1 || [](! (na1e1 || na2e1)))
+
+PATTERN: Absence
+LTL: [](notify_artists_e1 -> 
+        (!(notify_client_event_a1_e2 || notify_client_event_a2_e2) U 
+         (notify_artists_e2 || 
+          []!(notify_client_event_a1_e2 || notify_client_event_a2_e2))))
+- [](ne1 -> ((! (na1e2 || na2e2)) U (ne2 || [](! (na1e2 || na2e2)))))
+
+PATTERN: Absence
+LTL: [](e1_szEQ0 -> 
+        (!(notify_client_event_a1_e1 || notify_client_event_a2_e1) U
+         (e1_szGT0 || 
+          []!(notify_client_event_a1_e1 || notify_client_event_a2_e1))))
+- [](e1qe0 -> ((! (na1e1 || na2e1)) U (e1gt0 || [](! (na1e1 || na2e1)))))
+
+PATTERN: Absence
+LTL:  <>register_a1_e1 -> (!notify_event_a1_e1 U register_a1_e1)
+- <>r -> ((! n) U r)
+
+PATTERN: Absence
+LTL: [](unregister_a1_e1 -> 
+        (!notify_client_event_a1_e1 U 
+         (register_a1_e1 || []!notify_client_event_a1_e1)))
+- [](u -> ((! n) U (r || [](! n))))
+
+PATTERN: Constrained Response-Chain (3-1)
+LTL: <>term -> 
+     []((register_a1_e1 && 
+         (!unregister_a1_e1 U 
+          (register_a2_e1 && 
+           (!unregister_a1_e1 && !unregister_a2_e1) U notify_artists_e1))) ->
+        <>(notify_artist_e1 &
+           (!notify_client_event_a2_e1 U notify_client_event_a1_e1)))
+@ <>t -> []((ra1e1 && ((! ua1e1) U (ra2e1 && ((! ua1e1) && (! ua2e1)) U ne1))) -> <>(ne1 && ((! na2e1) U na1e1)))
+
+PATTERN: Absence
+LTL: [](e1_szEQ2 & (after_register_a1_e1 | after_register_a2_e1) -> 
+        (!(register_a2_e1 || register_a1_e1)) U
+         (e1_szLT2 || []!(register_a2_e1 || register_a1_e1)))
+- [](eq2 && (ara1e1 || ara2e1) -> ((! (ra2a1 || ra1e1))) U (lt2 || [](! (ra2e1 || ra1e1))))
+
+PATTERN: Absence
+LTL: <>register_a1_e1 -> (!unregister_a1_e1 U register_a1_e1)
+- <>ra1e1 -> ((! ua1e1) U ra1e1)
+
+PATTERN: Absence
+LTL: [](after_unregister_a1_e1 -> 
+        (!unregister_a1_e1 U (register_a1_e1 || []!unregister_a1_e1)))
+- [](aa1e1 -> ((! ua1e1) U (ra1e1 || [](! (ua1e1)))))
+
+PATTERN: Universal
+LTL: []( term -> (e1_szEQ0 && e2_szEQ0))
+- [](t -> (e1 && e2))
+
+PATTERN: Response
+LTL: (register_a1_e1 -> (!term U unregister_a1_e1)) U (term | [](!term))
+- (ra1e1 -> ((! t) U ua1e1)) U (t || []((! t)))
+
+PATTERN: Response
+LTL: AG(landingButi.pressed -> AF(lift.floor=i & lift.door=open))
+- [](land -> <>(liftf && lifto))
+
+PATTERN: Response
+LTL: AG(landingButi.pressed -> AF(lift.floor=i & lift.door=open & 
+                                   lift.direction=down))
+- [](la -> <>(lif && lio && lid))
+
+PATTERN: Response
+LTL: AG(liftButi.pressed -> AF(floor=i & door=open))
+- [](l -> <>(f && d))
+
+PATTERN: Unknown
+LTL: AG(floor=3 & idle & door=closed -> EG(floor=3 & door=closed))
+???
+
+PATTERN: Response (constrained variation)
+LTL: AG(floor=2 & direction=up & liftBut5.pressed ->
+        A[direction=up U floor=5])
+???
+
+PATTERN: Response
+LTL: AG(liftBut3.pressed & !lift.empty -> AF((floor=3 & dor=open) | lift.empty))
+- [](l3 && (! le) -> <>((f3 && d) || le))
+
+PATTERN: Unknown
+LTL: AG(floor=4 & idle -> E[idle U floor=1])
+???
+
+PATTERN: Response (constrained variation)
+LTL: AG(up & liftBut2.pressed & !liftBut3.pressed ->
+        A[!(floor=3 & doors=open) U ((floor=2 & door=open) | !up)])
+???
+
+PATTERN: Response (constrained variation)
+LTL: AG(floor=3 & overloaded ->
+        A[floor=3 U !overloaded])
+???
+
+PATTERN: Unknown
+LTL: AG(door=open & !overloaded -> E[!overloaded U door=closed])
+???
+
+PATTERN: Absence
+LTL: AG(!(overloaded & door=closed))
+- []((! (o) && d))
+
+PATTERN: Constrained Response
+LTL: [] (p -> q U r)
+- [] (p -> q U r)
+
+PATTERN: Absence
+LTL: [] !(cr1 && cr2)
+- [] (! (cr1 && cr2))
+
+PATTERN: Response
+LTL: [] (up -> (<> down))
+- [] (up -> (<> down))
+
+PATTERN: Response
+LTL: [] (p -> <>q)
+- [] (p -> <>q)
+
+PATTERN: Unknown
+LTL: [] (b -> ([] !np_ && <>r))
+- [] (b -> ([] (! np) && <>r))
+
+PATTERN: Existence
+LTL:  <> bp
+- <> bp
+
+PATTERN: Unknown
+LTL: []<> (a -> (c U d))
+- []<> (a -> (c U d))
+
+PATTERN: Unknown
+LTL: []<> (a -> <> d))
+- []<> (a -> <> d))
+
+PATTERN: Response
+LTL: [] ((p1 -> <>p2) && (p3 -> <>p4)) -> [](p5 -> <>p6)
+- [] ((p1 -> <>p2) && (p3 -> <>p4)) -> [](p5 -> <>p6)
+
+PATTERN: Unknown
+LTL: (p && X q) || (q && X p)
+- (p && X q) || (q && X p)
+
+PATTERN: Unknown
+LTL: <> ((a && b) && b U c)
+- <> ((a && b) && b U c)
+
+PATTERN: Existence
+LTL: <> (p U q)
+- <> (p U q)
+
+PATTERN: Existence
+LTL: <>[] p
+- <>[] p
+
+PATTERN: Always
+LTL: [] (p U !p)
+- [] (p U (! p))
+
+PATTERN: Universal
+LTL: []<>f
+- [] <> f
+
+PATTERN: Universal
+LTL: [](f -> []f)
+- [](f -> []f)
+
+PATTERN: Universal
+LTL: []<>aftsCC  
+- [] <> a
+
+PATTERN: Existence
+LTL: <>aftsCC  
+- <> a
+
+PATTERN: Absence
+LTL: [](aftsCC -> !<>aftsDR)
+- [](a -> (! <> d))
+
+PATTERN: Response
+LTL: [](aftsCR -> <>aftsCC)
+- [](a -> <>c)
+
+PATTERN: Existence
+LTL: aftsCR -> <>(aftsCC || aftsDR)
+- a -> <>(c || d)
+
+PATTERN: Filter=GlobalUniversal+GlobalAbsence
+LTL: ([]<>aftsDR) -> !<>aftsCC 
+- ([]<>d) -> (! (<> c))
+
+PATTERN: Response
+LTL: [](p -> <>[]q)
+- [](p -> <>[] q)
+
+PATTERN: Response
+LTL: [](P(0) -> <>Q(0)) && ... && [](P(m) -> <>Q(m))
+???
+
+PATTERN: Universal
+LTL: [](pressing -> (!arm1_in_press && !arm2_in_press))
+- [](p -> ((! a1) && (! a2)))
+
+PATTERN: Universal
+LTL: []((P(0) -> Q(0)) && ... && (P(m) -> Q(m)))
+???
+
+PATTERN: Response
+LTL: []((State=INIT && request) -> <>(State=WORK))
+- []((si && r) -> <>(sw))
+
+PATTERN: Response
+LTL: [](State=WORK -> <>(State=INIT))
+- [](sw -> <>si)
+
+PATTERN: Response Chain 1-2
+LTL: []((State=INIT && request) -> 
+        <>(!State=INIT && (!State=INIT -> <>(State=INIT))))
+- []((si && r) -> <>((! si) && ((! si) -> <>(si))))
+
+PATTERN: Universal
+LTL: [](EndOfCommunication -> BufferEmpty)
+- [](eoc -> be)
+
+PATTERN: Absence
+LTL: [](Synch(to_medium) -> 
+        !Synch(to_medium) U (Broadcast | []!Synch(to_medium)))
+- [](s -> (! s) U (b || [](! s)))
+
+PATTERN: Absence
+LTL: []!data==id
+- [](! d)
+
+PATTERN: Universal
+LTL: [](safe -> one_top)
+- [](s -> o)
+
+PATTERN: Universal
+LTL: [](safe -> bounded_height)
+- [](s -> b)
+
+PATTERN: Universal
+LTL: [](safe -> unique_ids)
+- [](s -> u)
+
+PATTERN: Response
+LTL: [](merging -> <>safe)
+- [](m -> <>s)
+
+PATTERN: Absence
+LTL: [](merging -> !(new_id U safe))
+- [](m -> (! (n) U s))
+
+PATTERN: Universal
+LTL: [](SignalFreeWay && !LevelCrossingClosed)
+- [](s && (! l))
+
+PATTERN: Absence
+LTL: []((PDcontrolX && <>EndCycle) -> !PDcontrolContraX U EndCycle)
+- []((p && <>e) -> (! px) U e)
+
+PATTERN: Response 
+LTL: []((SignalFreeWay && LevelCrossingClosed) -> 
+        <>(complete_RESTORE-AUTOMATICMODE && LevelCrossingClosed))
+- []((s && l) -> <>(c && l))
+
+PATTERN: Universal
+LTL: [](return_Achieving_Task -> not_subscriber(this,p.memory_property))
+- [](r -> n)
+
+PATTERN: Response
+LTL: [](task1_property_broken -> <>task1_terminated)
+- [](t -> <>tt)
+
+PATTERN: Response
+LTL: [](task1_property_broken -> 
+        <>(task1_terminated || task1_property_repaired))
+- [](t -> <>(tt || tpr))
+
+PATTERN: Response
+LTL: [](RequestedRegisterImpl[i] -> <>ServerRegistered[i])
+- [](r -> <> s)
+
+PATTERN: Existence
+LTL:  [](RequestGetIOR[i]=j -> (ServerRegistered[j] U GetIOR(i)))
+- [](r -> (s U g))
+
+PATTERN: Response
+LTL: [](ClientSend[i] -> <>ClientRecv[i])
+- [](s -> <>r)
+
+PATTERN: Response
+LTL: [](ClientSend[i] -> <>ServerRecv[i])
+- [](s -> <>r)
+
+PATTERN: Response
+LTL: [](ClientAskResult[i] -> <>ClientGetResult[i])
+- [](a -> <> g)
+
+PATTERN: Unknown
+LTL: [](TestImplKey[j]=ReceivedKey W !ServerRegistered[j]) 
+- [] ( (t U (! s)) || [] t)
+
+PATTERN: Universal
+LTL: [](ReceivedInteger = (SentInteger + 1))
+- [] r
