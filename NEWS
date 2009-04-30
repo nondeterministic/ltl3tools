@@ -7,7 +7,7 @@ LTL3 Tools NEWS
   library (Thanks to Rico Backasch for helping me debug this!)
 
 - Added a regression test suite (which is relevant mostly for
-  developers)
+  developers).  See test-suite/HOWTO for details.
 
 Wed Apr  1 21:20:22 EST 2009            LTL3 tools 0.0.7
 
