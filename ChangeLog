@@ -1,3 +1,10 @@
+Thu Apr 30 12:03:56 EST 2009  <baueran@gmail.com>
+
+- Makefile, src/config.ml: update version number
+- NEWS: reflect changes
+- src/putils.ml:get_label: change endstring from "] to "
+  (Thanks to Rico Backasch!)
+
 Wed Apr  1 10:29:57 EST 2009  <baueran@gmail.com>
 
 - src/alphabet.ml: new file
