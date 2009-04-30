@@ -184,12 +184,15 @@ let get_dst_state (delta : string) =
       rmchar (String.sub !deltap from ((String.length !deltap - from))) '\"'
   with _ -> "get_dst_state Error"
 
+(* There is, of course, the assumption that string has been trimmed of
+   all white space characters before. *)
+
 let get_label (delta : string) =
   try
     let label = ref (extfind delta "[label=") in
     let deltap = ref
       (String.sub delta (!label + 8) (String.length delta - !label - 8)) in
-    let max = extfind !deltap "\"]" in
+    let max = extfind !deltap "\"" in
       rmchar (String.sub !deltap 0 max) '\"'
   with _ -> "get_label Error"
 
