@@ -21,9 +21,18 @@ tools.
   has generated gnuplot.dat, it generates a Postscript graph of the 
   results.
 
+  Given that gnuplot.dat has been generated, it can be invoked as
+  follows (without leading $)
+  
+  $ gnuplot plot.p
+
+  and produces a file called ltl3-tools-results.ps inside the current
+  directory.
+
 - reference-gnuplot*.dat: These are the "correct" results that should be
   obtained when running the test with and without -l switch.  If the diff
-  between any of these files and a freshly generated .dat file shows any
-  differences, then it is likely that some new bug has been introduced
+  between any of these files and a freshly generated .dat file is
+  non-empty, then it is likely that some new bug has been introduced
   (e.g., as it happened when switching from version 3.7 to 4.0 of the
-  AT&T fsmlibrary).  These files should help detect hard to trace bugs.
+  AT&T fsmlibrary).  These files should help detect hard to trace bugs
+  and different values for particular formulae may help fixing them.
