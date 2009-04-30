@@ -1,0 +1,29 @@
+HOWTO - Testing LTL3 tools
+-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+This directory contains some test scripts for the LTL3 tools.  Please
+read on to find out what their meaning is and how to test the LTL3
+tools.
+
+- rv_properties.txt: That's a collection of LTL formulae for testing
+  purposes.  See the comments inside that file for further information
+  on them and their origins.
+
+- start.sh: This is the script to compute monitors for all formulae
+  in the above file.  If invoked with the -l command line option,
+  it will remove all monitors which consist only of a single ?-state.
+
+  The output of this script can be piped into a text file.  Besides,
+  it also generates the file gnuplot.dat, if invoked without the -l
+  switch, and gnuplot-l.dat otherwise.
+
+- plot.p: This is a gnuplot input file.  Given that the above script
+  has generated gnuplot.dat, it generates a Postscript graph of the 
+  results.
+
+- reference-gnuplot*.dat: These are the "correct" results that should be
+  obtained when running the test with and without -l switch.  If the diff
+  between any of these files and a freshly generated .dat file shows any
+  differences, then it is likely that some new bug has been introduced
+  (e.g., as it happened when switching from version 3.7 to 4.0 of the
+  AT&T fsmlibrary).  These files should help detect hard to trace bugs.
