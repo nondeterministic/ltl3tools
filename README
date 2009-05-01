@@ -5,8 +5,10 @@ What you need to properly use the LTL3 tools:
 ---------------------------------------------
 
   1. AT&T's fsmlibrary: http://www.research.att.com/~fsmtools/fsm/
+     (tested with versions 3.7 and 4.0 of the library)
 
   2. LTL2BA: http://www.lsv.ens-cachan.fr/~gastin/ltl2ba/
+     (tested with version 1.1 of the translator)
 
   3. Optional: AT&T's Graphviz, which includes the programs dot, dotty,
      etc.  Note that most modern Linux systems have these preinstalled.
