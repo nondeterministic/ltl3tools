@@ -42,5 +42,5 @@ directory.  Otherwise, follow these steps to compile the LTL3 tools:
   Notice, ltl2mon is written in Ocaml.  So, you will need an Ocaml
   tool chain.
 
-For further information read the files AUTHORS and COPYRIGHT, or visit
+For further information read the files AUTHORS and COPYING, or visit
 http://ltl3tools.sf.net/.
