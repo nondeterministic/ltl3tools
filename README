@@ -4,6 +4,8 @@ LTL3 tools README
 What you need to properly use the LTL3 tools:
 ---------------------------------------------
 
+Download:
+
   1. AT&T's fsmlibrary: http://www.research.att.com/~fsmtools/fsm/
      (tested with versions 3.7 and 4.0 of the library)
 
@@ -13,12 +15,15 @@ What you need to properly use the LTL3 tools:
   3. Optional: AT&T's Graphviz, which includes the programs dot, dotty,
      etc.  Note that most modern Linux systems have these preinstalled.
 
+Then simply copy the binaries of 1. and 2. into the third-party/ directory
+of the LTL3 tools distribution.  (2. may have to be compiled first.)
+
 How to run ltl2mon / the LTL3 tools:
 ------------------------------------
 
   1. Change into the directory where you extracted the package
 
-  2. Check the settings inside ltl2mon
+  2. Optional: Check the settings inside ltl2mon
      (ltl2mon is the main entry point to the LTL3 tools)
 
   3. Run, for example, "./ltl2mon "(! a) U b" | dot -Tps > graph.ps"
