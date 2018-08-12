@@ -6,8 +6,14 @@ What you need to properly use the LTL3 tools:
 
 Download:
 
-  1. AT&T's fsmlibrary: http://www.research.att.com/~fsmtools/fsm/
-     (tested with versions 3.7 and 4.0 of the library)
+  1. AT&T's fsmlibrary version 4.0. It used to be widely available under
+     a free-to-use license for noncommercial purposes, but now seems to
+     be available only upon request.  Perhaps, these folks can help:
+
+     https://github.com/att
+
+     Otherwise use a web search, as many universities still use the library
+     in their courses and offer binaries to download.
 
   2. LTL2BA: http://www.lsv.ens-cachan.fr/~gastin/ltl2ba/
      (tested with version 1.1 of the translator)
@@ -39,8 +45,8 @@ directory.  Otherwise, follow these steps to compile the LTL3 tools:
   
   2. Run "make install"
 
-  Notice, ltl2mon is written in Ocaml.  So, you will need an Ocaml
-  tool chain.
+     Notice, ltl2mon is written in Ocaml.  So, you will need an Ocaml
+     tool chain.
 
 For further information read the files AUTHORS and COPYING, or visit
 http://ltl3tools.sf.net/.

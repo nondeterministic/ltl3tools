@@ -1,7 +1,7 @@
 LTL3 Tools NEWS
 -=-=-=-=-=-=-=-
 
-[under development]                     LTL3 tools 0.0.8
+Sun Aug 12 10:46:40 CEST 2018           LTL3 tools 0.0.8
 
 - LTL3 tools now work with the latest version (= 4.0) of AT&T's FSM
   library (Thanks to Rico Backasch for helping me debug this!)
